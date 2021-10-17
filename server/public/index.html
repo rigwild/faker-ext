@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Faker server!</title>
+    <style>
+      html {
+        max-width: 70ch;
+        padding: 1.5rem;
+        margin: auto;
+        line-height: 1.75rem;
+        font-size: 1rem;
+        font-family: 'Open Sans', Arial, sans-serif;
+      }
+
+      pre {
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 10px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome to the Faker server!</h1>
+    <h2>Get a Post</h2>
+    <h3>Request</h3>
+    <pre>GET <a href="hello-world">/:id</a></pre>
+
+    <h3>Response</h3>
+    <pre>
+{
+  "content": "Hello world!", 
+  "timestamp": "2021-10-17T14:35:48.867Z"
+}</pre
+    >
+
+    <h2>Add a Post</h2>
+    <h3>Request</h3>
+    <pre>
+POST /api/upload
+Content-Type: application/json
+
+{ "content": "hello" }</pre
+    >
+
+    <h3>Response</h3>
+    <pre>{ "externalUri": "<a href="/hello-world">/hello-world</a>" }</pre>
+
+    <div style="text-align: right">
+      <a href="https://github.com/rigwild/faker-ext">GitHub</a>
+    </div>
+  </body>
+</html>

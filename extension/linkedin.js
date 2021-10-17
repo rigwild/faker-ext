@@ -1,5 +1,7 @@
 // @ts-check
 
+const fakerServerEndpoint = 'http://localhost:3000'
+
 console.log('[Faker] Extension initialized!')
 
 /**
@@ -9,22 +11,34 @@ console.log('[Faker] Extension initialized!')
 const delay = ms => new Promise(res => setTimeout(res, ms))
 
 /**
- * @param {string} postContent
+ * @param {string} content
  * @returns {Promise<string>}
  */
-const getContentExternalUri = async postContent => {
-  const postSummary = postContent.length > 50 ? `${postContent.slice(0, 50)}...` : postContent
-  console.log(`[Faker] Getting external link for post "${postSummary}"...`)
-  await delay(Math.floor(Math.random() * 2000))
-  const externalUri = `https://example.com/${Math.floor(Math.random() * 100000)}`
-  console.log(`[Faker] Replacing post with external link ${externalUri}`)
-  return externalUri
+const getContentExternalUri = async content => {
+  const summary = content.length > 50 ? `${content.slice(0, 50)}...` : content
+  console.log(`[Faker] Getting external link for post "${summary}"...`)
+
+  const res = await fetch(`${fakerServerEndpoint}/api/upload`, {
+    method: 'POST',
+    body: JSON.stringify({ content }),
+    headers: {
+      'User-Agent': 'faker-ext v0.1',
+      'Content-Type': 'application/json'
+    }
+  })
+  const resJson = await res.json()
+  if (!res.ok) throw new Error(resJson.message)
+
+  const { externalUri } = resJson
+  const fullExternalUri = `${fakerServerEndpoint}${externalUri}`
+  console.log(`[Faker] Replacing post with external link ${fullExternalUri}`)
+  return fullExternalUri
 }
 
 const transformPost = async () => {
   const textarea = document.querySelector('.editor-content > div > p')
-  const postContent = textarea.textContent
-  const contentExternalUri = await getContentExternalUri(postContent)
+  const content = textarea.textContent
+  const contentExternalUri = await getContentExternalUri(content)
   textarea.textContent = contentExternalUri
 }
 
@@ -47,7 +61,7 @@ const postBtnEventHandler = async e => {
 
     // Minimum time to wait after replace (if the post content replace is done too soon before
     // posting, the replace will not be taken into account!)
-    const minWaitTimeMs = 300
+    const minWaitTimeMs = 500
     await delay(minWaitTimeMs)
 
     console.log('[Faker] Publishing replaced post')

@@ -1,0 +1,12 @@
+{
+  "name": "Faker",
+  "manifest_version": 2,
+  "version": "0.1",
+  "description": "Host your social network content externally",
+  "content_scripts": [
+    {
+      "matches": ["*://*.linkedin.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}

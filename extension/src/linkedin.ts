@@ -1,20 +1,10 @@
-// @ts-check
-
 const fakerServerEndpoint = 'http://localhost:3000'
 
 console.log('[Faker] Extension initialized!')
 
-/**
- * @param {number} ms
- * @returns {Promise<void>}
- */
-const delay = ms => new Promise(res => setTimeout(res, ms))
+const delay = (ms: number): Promise<void> => new Promise(res => setTimeout(res, ms))
 
-/**
- * @param {string} content
- * @returns {Promise<string>}
- */
-const getContentExternalUri = async content => {
+const getContentExternalUri = async (content: string) => {
   const summary = content.length > 50 ? `${content.slice(0, 50)}...` : content
   console.log(`[Faker] Getting external link for post "${summary}"...`)
 
@@ -36,20 +26,18 @@ const getContentExternalUri = async content => {
 }
 
 const transformPost = async () => {
-  const textarea = document.querySelector('.editor-content > div > p')
-  const content = textarea.textContent
+  const textarea = document.querySelector('.editor-content > div > p')!
+  const content = textarea.textContent!
   const contentExternalUri = await getContentExternalUri(content)
   textarea.textContent = contentExternalUri
 }
 
-/** @returns {HTMLButtonElement} */
-const getPostBtn = () => document.querySelector('.share-actions__primary-action')
+const getPostBtn = () => document.querySelector<HTMLButtonElement>('.share-actions__primary-action')!
 
 /** Lock to not re-register the click event handler if the post is currently being replaced */
 let isPostingLock = false
 
-/** @param {Event} e */
-const postBtnEventHandler = async e => {
+const postBtnEventHandler = async (e: Event) => {
   try {
     isPostingLock = true
 
@@ -66,7 +54,7 @@ const postBtnEventHandler = async e => {
 
     console.log('[Faker] Publishing replaced post')
     getPostBtn().click()
-  } catch (error) {
+  } catch (error: any) {
     error.message = `[Faker] Failed to replace post content - ${error.message}`
     throw error
   } finally {

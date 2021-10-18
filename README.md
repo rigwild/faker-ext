@@ -23,17 +23,37 @@ LinkedIn will be focused first as a proof of concept.
 
 ## Browser Extension
 
-### Install
+### Install dependencies
+
+```sh
+pnpm install
+```
+
+### Build
+
+```sh
+pnpm build
+```
+
+Automatically rebuild on changes.
+
+```sh
+pnpm build:watch
+```
+
+**Note** This will not watch for manifest changes. You still need to reload the extension in your browser.
+
+### Browser install
 
 1. Head over to [chrome://extensions](chrome://extensions)
 1. Toggle "Developper mode" on
-1. Click "Load unpacked" and select the [extension](./extension) directory
+1. Click "Load unpacked" and select the generated `extension/dist` directory
 
 Faker is now installed and working!
 
 ## Self-hosted server
 
-### Install
+### Install dependencies
 
 Prerequisites:
 
@@ -41,6 +61,26 @@ Prerequisites:
 
 ```sh
 pnpm install
+```
+
+### Build
+
+```sh
+pnpm build
+```
+
+### Run
+
+```sh
+pnpm start
+```
+
+### Run in devlopment mode
+
+Running with hot-reload support
+
+```sh
+pnpm dev
 ```
 
 ## TODO

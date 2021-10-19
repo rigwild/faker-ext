@@ -41,7 +41,7 @@ Automatically rebuild on changes.
 pnpm build:watch
 ```
 
-**Note** This will not watch for manifest changes. You still need to reload the extension in your browser.
+**Note** You still need to reload the extension in your browser.
 
 ### Browser install
 

@@ -1,4 +1,4 @@
-export const fakerServerEndpoint = 'http://localhost:3000'
+import { FAKER_CONFIG } from './config'
 
 export const delay = (ms: number): Promise<void> => new Promise(res => setTimeout(res, ms))
 
@@ -8,7 +8,7 @@ export abstract class FakerReplacer {
 
   /** AddEventListener loop interval identifier */
   private intervalId?: number
-  publishButtonEventHandlerBindedFn: typeof FakerReplacer['prototype']['publishButtonEventHandler']
+  private publishButtonEventHandlerBindedFn: typeof FakerReplacer['prototype']['publishButtonEventHandler']
 
   /** publishButtonEventHandler unique reference */
 
@@ -31,7 +31,7 @@ export abstract class FakerReplacer {
     const summary = content.length > 50 ? `${content.slice(0, 50)}...` : content
     console.log(`[Faker] Getting external link for post "${summary}"...`)
 
-    const res = await fetch(`${fakerServerEndpoint}/api/upload`, {
+    const res = await fetch(`${FAKER_CONFIG.serverUri}/api/upload`, {
       method: 'POST',
       body: JSON.stringify({ content }),
       headers: {
@@ -43,7 +43,7 @@ export abstract class FakerReplacer {
     if (!res.ok) throw new Error(resJson.message)
 
     const { externalUri } = resJson
-    const fullExternalUri = `${fakerServerEndpoint}${externalUri}`
+    const fullExternalUri = `${FAKER_CONFIG.serverUri}${externalUri}`
     console.log(`[Faker] Replacing post with external link ${fullExternalUri}`)
     return fullExternalUri
   }

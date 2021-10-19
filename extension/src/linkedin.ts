@@ -1,4 +1,5 @@
 import { FakerReplacer } from './lib'
+import { loadConfiguration, FAKER_CONFIG } from './config'
 
 class LinkedInFakerReplacer extends FakerReplacer {
   getPublishButton() {
@@ -13,5 +14,9 @@ class LinkedInFakerReplacer extends FakerReplacer {
   }
 }
 
-const fakerReplacer = new LinkedInFakerReplacer()
-fakerReplacer.publishButtonAddEventListenerLoopStart()
+loadConfiguration().then(({ linkedinActivated }) => {
+  if (linkedinActivated) {
+    const fakerReplacer = new LinkedInFakerReplacer()
+    fakerReplacer.publishButtonAddEventListenerLoopStart()
+  }
+})

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild --bundle --outdir=dist src/*.ts && cp src/manifest.json dist/",
+    "build": "esbuild --bundle --outdir=dist src/*.ts && rm dist/lib.js && cp src/manifest.json dist/",
     "build:watch": "esbuild --bundle --watch --outdir=dist src/*.ts"
   },
   "devDependencies": {

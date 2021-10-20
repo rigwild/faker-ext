@@ -1,8 +1,12 @@
 import { FAKER_CONFIG } from './config'
 
+export type Post = { content: string; timestamp: Date }
+
 export const delay = (ms: number): Promise<void> => new Promise(res => setTimeout(res, ms))
 
 export abstract class FakerReplacer {
+  public static fakerPostTag = 'Posted with Faker extension ✨'
+
   /** Lock to not re-register the click event handler if the post is currently being replaced */
   private isPostingLock = false
 
@@ -19,8 +23,11 @@ export abstract class FakerReplacer {
   /** Get the DOM element that triggers the post publishing */
   abstract getPublishButton(): HTMLButtonElement
 
-  /** Apply the post transformation in the DOM */
+  /** Apply the post content transformation in the DOM before publishing it */
   abstract transformPost(): Promise<void>
+
+  /** Apply feed posts content transformation in the DOM */
+  abstract renderTransformedPosts(): Promise<void>
 
   /**
    * Upload the content to the self-hosted server and get its URI
@@ -46,6 +53,30 @@ export abstract class FakerReplacer {
     const fullExternalUri = `${FAKER_CONFIG.serverUri}${externalUri}`
     console.log(`[Faker] Replacing post with external link ${fullExternalUri}`)
     return fullExternalUri
+  }
+
+  /**
+   * Get content from the self-hosted server
+   * @param uri Content uri
+   * @returns Post content
+   */
+  protected async getExternalContent(uri: string): Promise<Post> {
+    console.log(`[Faker] Getting external content for uri "${uri}"...`)
+
+    const res = await fetch(uri, {
+      headers: {
+        Accept: 'application/json',
+        'User-Agent': 'faker-ext v0.1'
+      }
+    })
+    const resJson = await res.json()
+    if (!res.ok) throw new Error(resJson.message)
+
+    const { content, timestamp } = resJson as Post
+    const summary = content.length > 50 ? `${content.slice(0, 50)}...` : content
+
+    console.log(`[Faker] Replacing post with content "${summary}"`)
+    return { content, timestamp }
   }
 
   public async publishButtonEventHandler(e: Event) {
@@ -89,17 +120,30 @@ export abstract class FakerReplacer {
     })
   }
 
-  public publishButtonAddEventListenerLoopStart() {
-    this.intervalId = setInterval(() => {
-      const publishButton = this.getPublishButton()
-      if (!this.isPostingLock && publishButton) this.publishButtonAddEventListener()
+  public start() {
+    this.intervalId = setInterval(async () => {
+      // Hook the post publish button
+      if (!this.isPostingLock && this.getPublishButton()) this.publishButtonAddEventListener()
+
+      // Replace the posts with their externally-hosted content
+      await this.renderTransformedPosts()
     }, 1000)
   }
 
-  public publishButtonAddEventListenerLoopStop() {
+  public stop() {
     if (typeof this.intervalId === 'number') {
       clearInterval(this.intervalId)
       this.intervalId = null
     }
   }
+}
+
+export const isValidHttpUrl = (str: string) => {
+  let url: URL
+  try {
+    url = new URL(str)
+  } catch {
+    return false
+  }
+  return url.protocol === 'http:' || url.protocol === 'https:'
 }

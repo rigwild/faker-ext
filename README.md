@@ -45,7 +45,7 @@ pnpm build:watch
 
 ### Browser install
 
-1. Head over to [chrome://extensions](chrome://extensions)
+1. Head over to `chrome://extensions`
 1. Toggle "Developper mode" on
 1. Click "Load unpacked" and select the generated `extension/dist` directory
 

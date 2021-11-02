@@ -1,4 +1,4 @@
-import Post from "./models/post"
+import Post from "./models/post.model"
 
 const dbInit = async () => {
     await Post.sync({ alter: true })

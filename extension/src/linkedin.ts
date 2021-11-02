@@ -2,18 +2,7 @@ import { FakerReplacer, isValidHttpUrl, Post } from './lib'
 import { loadConfiguration } from './config'
 
 class LinkedInFakerReplacer extends FakerReplacer {
-  getPublishButton() {
-    return document.querySelector<HTMLButtonElement>('.share-actions__primary-action')!
-  }
-
-  async transformPost() {
-    const textarea = document.querySelector('.editor-content > div > p')!
-    const content = textarea.textContent!
-    const contentExternalUri = await this.getContentExternalUri(content)
-    textarea.textContent = `${contentExternalUri}\n\n${FakerReplacer.fakerPostTag}`
-  }
-
-  async renderTransformedPosts() {
+  async renderExternallyHostedPosts() {
     const posts = [...document.querySelectorAll('.feed-shared-update-v2')].map(x => ({
       postEle: x,
       postSubDescriptionEle: x.querySelector('.feed-shared-actor__sub-description'),
@@ -52,7 +41,10 @@ class LinkedInFakerReplacer extends FakerReplacer {
 
 loadConfiguration().then(({ linkedinActivated }) => {
   if (linkedinActivated) {
-    const fakerReplacer = new LinkedInFakerReplacer()
-    fakerReplacer.start()
+    new LinkedInFakerReplacer({
+      method: 'POST',
+      uri: '/voyager/api/contentcreation/normShares',
+      bodyContentObjectPath: 'commentaryV2.text'
+    })
   }
 })

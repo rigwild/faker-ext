@@ -1,7 +1,8 @@
 import path from 'path'
 import express from 'express'
 import cors from 'cors'
-import { nanoid } from 'nanoid'
+import * as postRepository from './db/repositories/postRepository';
+import dbInit from './db/init';
 
 const SERVER_PORT = process.env.SERVER_PORT ? +process.env.SERVER_PORT : 3000
 
@@ -11,10 +12,6 @@ app.use(express.json())
 app.use(cors())
 app.use(express.static(path.join(__dirname, '..', 'public')))
 
-type Post = { content: string; timestamp: Date }
-const db = new Map<string, Post>()
-db.set('hello-world', { content: 'Hello world!', timestamp: new Date() })
-
 const asyncMiddleware =
   (fn: express.RequestHandler) => (req: express.Request, res: express.Response, next: express.NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next)
@@ -22,14 +19,16 @@ const asyncMiddleware =
 
 app.post(
   '/api/upload',
-  asyncMiddleware((req, res) => {
-    const id = nanoid()
+  asyncMiddleware(async (req, res) => {
     if (req.headers['content-type'] === 'application/json') {
-      const { content } = req.body
-      db.set(id, { content, timestamp: new Date() })
+      const newPost = req.body
+      const savedPost = await postRepository.create(newPost);
+      const id = savedPost.id;
+      console.log(savedPost);
 
-      const summary = content.length > 50 ? `${content.slice(0, 50)}...` : content
-      console.log(`New post "${summary}" saved at ${id}`)
+      const content = savedPost.content;
+      // const summary = content.length > 50 ? `${content.slice(0, 50)}...` : content
+      // console.log(`New post "${summary}" saved at ${id}`)
 
       res.json({ externalUri: `/${id}` })
       return
@@ -38,13 +37,20 @@ app.post(
   })
 )
 
-app.get('/:id', (req, res) => {
-  const { id } = req.params
-  if (!db.has(id)) {
+app.get('/:id', async(req, res) => {
+  const id = Number(req.params.id);
+  const post = await postRepository.getById(id);
+
+  if (!post) {
     res.status(404).json({ message: 'Content was not found' })
     return
   }
-  res.json(db.get(id))
+
+  res.json(post)
 })
 
-app.listen(SERVER_PORT, () => console.log(`Server is listening at http://localhost:${SERVER_PORT}`))
+dbInit().then(() => {
+  app.listen(SERVER_PORT, () => console.log(`Server is listening at http://localhost:${SERVER_PORT}`))
+})
+
+

@@ -1,0 +1,35 @@
+version: "1.0"
+services:
+  server:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+  db:
+    image: postgres:alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/data/postgres
+    environment:
+      POSTGRES_USER: changeme
+      POSTGRES_PASSWORD: changeme
+      PGDATA: /data/postgres
+  # not mandatory
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    ports:
+      - "3001:3001"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: changeme@changeme.com
+      PGADMIN_DEFAULT_PASSWORD: changeme
+      PGADMIN_LISTEN_PORT: 3001
+    restart: unless-stopped
+
+volumes:
+  db-data:

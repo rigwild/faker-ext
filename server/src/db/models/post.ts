@@ -1,5 +1,5 @@
 import { DataTypes, Model } from "sequelize";
-import { sequelize } from "../config";
+import { sequelize } from "../dbConfig";
 
 export default class Post extends Model {
     public id!: number;

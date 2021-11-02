@@ -1,8 +1,12 @@
+require('dotenv').config();
+
 import path from 'path'
 import express from 'express'
 import cors from 'cors'
 import * as postRepository from './db/repositories/postRepository';
 import dbInit from './db/init';
+
+
 
 const SERVER_PORT = process.env.SERVER_PORT ? +process.env.SERVER_PORT : 3000
 

@@ -4,6 +4,10 @@ A browser extension to host your social network content externally.
 
 LinkedIn will be focused first as a proof of concept.
 
+## Specifications
+
+See [Specifications.md](./specifications.md).
+
 ## Supported Social Networks
 
 - LinkedIn
@@ -35,7 +39,7 @@ pnpm install
 pnpm build
 ```
 
-Automatically rebuild on changes.
+Automatically rebuild on changes
 
 ```sh
 pnpm build:watch

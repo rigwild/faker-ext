@@ -57,6 +57,10 @@ Faker is now installed and working!
 
 ## Self-hosted server
 
+```sh
+docker compose up --env-file default.env
+```
+
 ### Install dependencies
 
 Prerequisites:

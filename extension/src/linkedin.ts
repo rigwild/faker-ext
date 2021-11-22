@@ -21,10 +21,10 @@ class LinkedInFakerReplacer extends FakerReplacer {
       fakerPosts.map(async x => {
         let externalContent: { post: Post; success: true } | { message: string; success: false }
         try {
-          externalContent = { post: await this.getExternalContent(x.uri), success: true }
+          externalContent = { post: await this.getExternalContentFromUri(x.uri), success: true }
         } catch (error) {
           console.error(`[Faker] Failed to load external content for uri "${x.uri}"`, error)
-          externalContent = { message: error.message, success: false }
+          externalContent = { message: `Faker Error: ${error.message}`, success: false }
         }
         return { ...x, externalContent }
       })

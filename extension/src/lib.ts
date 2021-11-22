@@ -67,7 +67,7 @@ export abstract class FakerReplacer {
    * @param uri Content external uri
    * @returns Post content
    */
-  protected async getExternalContent(uri: string): Promise<Post> {
+  protected async getExternalContentFromUri(uri: string): Promise<Post> {
     console.log(`[Faker][Extension] Retrieve external content from uri ${uri}`)
     const res = await fetch(uri, {
       headers: {

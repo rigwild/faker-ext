@@ -55,13 +55,30 @@ It also let the user enable/disable the extension for each of the social network
 
 ### Post publish
 
-1. Add an event listener on the post `Publish` button that will fire before the original click handler (see [`EventTarget.addEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) `useCapture` parameter that registers an event listener before it bubbling up to the next already-registered DOM listeners, and `once` for a one-time fired event listener)
-2. Copy the content of the `<textarea>` containing the future post
-3. Upload the post content to the [Storage self-hosted server](#storage-self-hosted-server) with credentials which returns its content URI
-4. Replace the posts's content with the URI
-5. Click the publish button (the faker event listener is destroyed after 1 usage so it won't trigger it again)
+1. **[Extension]** Inject the hooking script with a `<script>` tag in the page
+2. **[Page]** Hook the [`Fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and [`XMLHttpRequest`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) APIs to execute our replace function before sending requests
+3. **[Page]** When a request is being sent, if it matches a specified HTTP method and route then continue this process, else just send it as is
+4. **[Page]** Ask the extension using [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) to upload the post content to the [Storage self-hosted server](#storage-self-hosted-server)
+5. **[Extension]** Upload the post content to the [Storage self-hosted server](#storage-self-hosted-server) with credentials which returns its content URI
+6. **[Extension]** Send the content URI to the page using [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)
+7. **[Page]** Replace the post content with its content URI in the request body
+8. **[Page]** Send the modified request
+
+#### Why such a mess?
+
+##### Different JavaScript contexts
+
+The page and the extension are in different JavaScript contexts (i.e. `window.fetch` in the extension is not the same as `window.fetch` in the window). Thus, we inject the hooking script in the page with a `<script>` tag because we can't directly hook the functions in the page.
+
+##### Bypass CSP
+
+When using JavaScript in a web page, the browser will strictly follow the [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) sent by the remote server. Therefore, the browser prevents us from doing requests to unauthorized URIs (such as our [Storage self-hosted server](#storage-self-hosted-server)).
+
+To work around it, we set up a message listener in the extension's context (that does not need to follow the CSP) that handles the [Storage self-hosted server](#storage-self-hosted-server) upload then we send the result back using a message from the extension (see [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)).
 
 ### Post render
+
+**Note:** We decided to not make this component ultra-generic as we want to have specific UI changes for each social networks, not just replacing the post content.
 
 1. Periodically check the page content for new posts containing a header indicating the post is a Faker-handled post.
 2. Fetch the content using the uri included in the post

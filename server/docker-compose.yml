@@ -7,16 +7,19 @@ services:
       - db
     ports:
       - "3000:3000"
+    env_file:
+      - default.env
   db:
     image: postgres:alpine
     restart: always
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:${DB_PORT}"
     volumes:
       - db-data:/data/postgres
     environment:
-      POSTGRES_USER: changeme
-      POSTGRES_PASSWORD: changeme
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"
       PGDATA: /data/postgres
   # not mandatory
   pgadmin:

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "run-p build:extension build:options",
     "build:watch": "run-p build:*:watch",
-    "build:extension": "esbuild --bundle --outdir=dist src/*.ts && rm dist/lib.js dist/config.js && cp src/manifest.json dist/",
+    "build:extension": "esbuild --bundle --outdir=dist src/*.ts && rm -rf dist/lib dist/config.js && cp src/manifest.json dist/",
     "build:extension:watch": "nodemon --watch src --ext ts,json -x run-p build:extension",
     "build:options": "esbuild --bundle --format=esm --outfile=dist/public/options.js public/options.ts && cp public/options.html dist/public/options.html",
     "build:options:watch": "nodemon --watch public --ext ts,html -x run-p build:options"

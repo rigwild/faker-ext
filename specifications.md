@@ -107,8 +107,60 @@ The server stores the content the user posts on a social network (posts and comm
 
 ### Tech Stack
 
-The server is developed in TypeScript with [Express](https://expressjs.com/). The used database is PostgreSQL.
+The server is developed in TypeScript with [Express](https://expressjs.com/) and saves its data in a PostgreSQL.
+
+### Database Schema
+
+TODO
 
 ### API
 
-TODO
+#### `GET /api/posts/:id`
+
+Load the textual post associated with the provided `id`.
+
+#### `GET /api/media/:id`
+
+Load the media file associated with the provided `id`.
+
+#### `POST /api/upload`
+
+The API can distinguish if the uploaded content is a textual post or a media file by looking at the incoming `Content-Type` header.
+
+##### Textual Post
+
+###### Request Headers
+
+| Name           | Value              |
+| -------------- | ------------------ |
+| `Content-Type` | `application/json` |
+
+###### Request Body
+
+```json
+{
+  "content": "My textual post content"
+}
+```
+
+##### Media
+
+**Note:** For now, the only supported file formats are:
+
+- `image/jpeg` -`.jpeg`
+- `image/png` - `.png`
+- `image/webp` -`.webp`
+- `video/mp4` - `.mp4`
+
+###### Request Headers
+
+| Name           | Value                 |
+| -------------- | --------------------- |
+| `Content-Type` | `multipart/form-data` |
+
+###### Request Body
+
+| Key       | Value                              |
+| --------- | ---------------------------------- |
+| `media`   | File content                       |
+| `mimType` | Media MIM type (e.g. `image/webp`) |

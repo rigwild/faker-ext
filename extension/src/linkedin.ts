@@ -4,9 +4,9 @@ import { loadConfiguration } from './config'
 class LinkedInFakerReplacer extends FakerReplacer {
   async renderExternallyHostedPosts() {
     const posts = [...document.querySelectorAll('.feed-shared-update-v2')].map(x => ({
-      postEle: x,
-      postSubDescriptionEle: x.querySelector('.feed-shared-actor__sub-description'),
-      postContentEle: x.querySelector('.feed-shared-text > .break-words')
+      postEle: x, // Post container
+      postSubDescriptionEle: x.querySelector('.feed-shared-actor__sub-description'), // Post publish datetime span
+      postContentEle: x.querySelector('.feed-shared-text > .break-words') // Post body
     }))
 
     // Only keep Faker-related posts with valid URIs
@@ -21,7 +21,7 @@ class LinkedInFakerReplacer extends FakerReplacer {
       fakerPosts.map(async x => {
         let externalContent: { post: Post; success: true } | { message: string; success: false }
         try {
-          externalContent = { post: await this.getExternalContentFromUri(x.uri), success: true }
+          externalContent = { post: await this.loadContentFromServer(x.uri), success: true }
         } catch (error) {
           console.error(`[Faker] Failed to load external content for uri "${x.uri}"`, error)
           externalContent = { message: `Faker Error: ${error.message}`, success: false }
@@ -42,9 +42,15 @@ class LinkedInFakerReplacer extends FakerReplacer {
 loadConfiguration().then(({ linkedinActivated }) => {
   if (linkedinActivated) {
     new LinkedInFakerReplacer({
-      method: 'POST',
-      uri: '/voyager/api/contentcreation/normShares',
-      bodyContentObjectPath: 'commentaryV2.text'
+      textReplace: {
+        method: 'POST',
+        uri: '/voyager/api/contentcreation/normShares',
+        bodyContentObjectPath: 'commentaryV2.text'
+      },
+      imageReplace: {
+        method: 'PUT',
+        uri: '/dms-uploads'
+      }
     })
   }
 })

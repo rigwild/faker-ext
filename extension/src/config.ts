@@ -13,7 +13,7 @@ const defaults: Readonly<FakerConfiguration> = Object.freeze({
   serverUri: 'http://localhost:3000',
   serverPassword: 'hi',
   linkedinActivated: true,
-  facebookActivated: false,
+  facebookActivated: true,
   twitterActivated: false,
   instagramActivated: false
 })

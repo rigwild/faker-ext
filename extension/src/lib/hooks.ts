@@ -15,11 +15,24 @@ import { placeholderImageBase64 } from './placeholderImageBase64'
  */
 function hookTextPostPublish(params: ReturnType<typeof injectedParams>, body: any): Promise<any> {
   return new Promise((resolve, reject) => {
-    let postContent = params.objectPathGet(
-      body,
-      params.hookConfig.textReplace.bodyContentObjectPath,
-      'Could not replace post content! XMLHttpRequest.prototype.send_objectPath.objectPathGet'
-    )
+    let postContent: any;
+    if (typeof body === 'object') {
+      postContent = params.objectPathGet(
+        body,
+        params.hookConfig.textReplace.bodyContentObjectPath,
+        'Could not replace post content! XMLHttpRequest.prototype.send_objectPath.objectPathGet'
+      )
+    } else {
+      const postContentMatch = body.match(/(,\"text\":\")(.*?)(\")/)
+      console.log('FB SUPPORT')
+      console.log(body)
+      console.log(postContentMatch)
+      if (postContentMatch && postContentMatch.length > 1) {
+        postContent = postContentMatch[2]
+      } else {
+        postContent = 'Could not replace post content! Parsing error'
+      }
+    }
 
     // If post is empty (e.g. publishing with an image attachment), make it not empty
     postContent ||= ' '
@@ -36,8 +49,14 @@ function hookTextPostPublish(params: ReturnType<typeof injectedParams>, body: an
         console.log(`[Faker][Injected] Received result of text upload: ${newPostContent.replace(/\s/g, ' ')}`)
 
         // Replace the body
-        params.objectPathSet(body, params.hookConfig.textReplace.bodyContentObjectPath, newPostContent)
-
+        if (typeof body === 'object') {
+          params.objectPathSet(body, params.hookConfig.textReplace.bodyContentObjectPath, newPostContent)
+        } else {
+          function addslashes(str: string) {
+            return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+          }
+          body = body.replace(/(,\"text\":\")(.*?)(\")/, `$1${encodeURIComponent(addslashes(newPostContent))}$3`)
+        }
         // Unregister this listener now that it was used successfully
         window.removeEventListener('message', handler)
 
@@ -111,7 +130,16 @@ function injectedFn(params: ReturnType<typeof injectedParams>) {
       if (method === params.hookConfig.textReplace.method && uri.includes(params.hookConfig.textReplace.uri)) {
         console.log('Hooked `XMLHttpRequest.prototype.send` API ROUTE textReplace', { method, uri }, arguments)
 
-        const body = JSON.parse(bodyRaw)
+        let body: any;
+        try {
+          body = JSON.parse(bodyRaw)
+        } catch {
+          body = decodeURIComponent(bodyRaw)
+          if (!body.match(/(,\"text\":\")(.*?)(\")/)) {
+            _XMLHttpRequest_send.apply(this, [bodyRaw])
+            return
+          }
+        }
         const newBody = await params.hookTextPostPublish(params, body)
         console.log('newBody', newBody)
 

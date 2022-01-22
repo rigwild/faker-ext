@@ -18,7 +18,7 @@ export module postService {
 
         const content = savedPost.content;
         const summary = content.length > 50 ? `${content.slice(0, 50)}...` : content
-        //console.log(`New post "${summary}" saved at ${id}`)
+        console.log(`New post "${summary}" saved at ${savedPost.id}`)
 
         return savedPost;
     }

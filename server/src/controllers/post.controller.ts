@@ -17,6 +17,7 @@ router.post(
             return
         } else if (req.headers['content-type']?.startsWith('multipart/form-data')) {
             if (req.file) {
+                console.log("one file...")
                 const media = await mediaService.createMedia(req.file);
                 res.json({ externalUri: `/media/${media.id}` })
             }

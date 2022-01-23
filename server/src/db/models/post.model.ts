@@ -6,6 +6,7 @@ export default class Post extends Model {
     public id!: number;
     public content!: string;
     public medias: Media[] = [];
+    public mediaIds: number[] | undefined;
 
     // timestamps!
     public readonly createdAt!: Date;
@@ -22,7 +23,7 @@ Post.init(
         content: {
             type: new DataTypes.TEXT(),
             allowNull: false
-        }
+        },
     }, {
     tableName: "posts",
     sequelize,

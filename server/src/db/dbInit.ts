@@ -1,14 +1,11 @@
 import Post from "./models/post.model"
 import Media from "./models/media.model";
-
-
-
-Media.belongsToMany(Post, { through: "MediaPosts", as: "posts"});
-Post.belongsToMany(Media, { through: "MediaPosts", as: "medias"});
+import { MediaPost } from "./models/mediaPost.model";
 
 const dbInit = async () => {    
-    await Post.sync({ alter: true });
-    await Media.sync({ alter: true });
+    await Post.sync({alter: true});
+    await Media.sync({alter: true});
+    await MediaPost.sync({alter: true});
 };
 
 export default dbInit;

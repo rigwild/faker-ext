@@ -2,8 +2,8 @@ import Media from "../models/media.model"
 
 export namespace mediaRepository {
     
-    export const create = async (post: Partial<Media>) => {
-        return await Media.create(post);
+    export const create = async (media: Partial<Media>) => {
+        return await Media.create(media);
     }
     
     export const getById = async (id: number): Promise<Media | null> => {

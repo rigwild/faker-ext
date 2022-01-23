@@ -14,8 +14,6 @@ services:
     restart: always
     ports:
       - "${DB_PORT}:${DB_PORT}"
-    expose:
-      - "${DB_PORT}"
     volumes:
       - db-data:/data/postgres
     environment:

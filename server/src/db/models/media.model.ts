@@ -4,7 +4,7 @@ import Post from "./post.model";
 
 export default class Media extends Model {
     public id!: number;
-    public media!: DataTypes.BlobDataType;
+    public media!: Buffer;
     public mimType!: MimType;
     public posts: Post[] = [];
 
@@ -19,6 +19,8 @@ export enum MimType {
     WEBP = "image/webp",
     MP4 = "video/mp4"
 }
+
+export const MIM_TYPES = new Set<string>(Object.values(MimType));
 
 Media.init(
     {

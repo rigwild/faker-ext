@@ -41,7 +41,7 @@ export abstract class FakerReplacer {
     const summary = content.length > 50 ? `${content.slice(0, 50)}...` : content
     console.log(`[Faker][Extension] Uploading the post "${summary}"...`)
 
-    const res = await fetch(`${FAKER_CONFIG.serverUri}/api/upload`, {
+    const res = await fetch(`${FAKER_CONFIG.serverUri}/api/posts/upload`, {
       method: 'POST',
       body: JSON.stringify({ content }),
       headers: {
@@ -69,7 +69,7 @@ export abstract class FakerReplacer {
     const formData = new FormData()
     formData.append('media', media, media.name)
 
-    const res = await fetch(`${FAKER_CONFIG.serverUri}/api/upload`, {
+    const res = await fetch(`${FAKER_CONFIG.serverUri}/api/posts/upload`, {
       method: 'POST',
       body: formData,
       headers: {

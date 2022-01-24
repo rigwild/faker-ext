@@ -19,7 +19,7 @@ router.post(
       if (req.file) {
         console.log('one file...')
         const media = await mediaService.createMedia(req.file)
-        res.json({ externalUri: `/media/${media.id}` })
+        res.json({ externalUri: `/api/media/${media.id}` })
       }
       res.end()
       return

@@ -152,7 +152,7 @@ function injectedFn(params: ReturnType<typeof injectedParams>) {
         console.log('Hooked `XMLHttpRequest.prototype.send` API ROUTE imageReplace', { method, uri }, arguments)
 
         const media = arguments[0] as File
-        const newMedia = params.hookMediaPublish(params, media)
+        const newMedia = await params.hookMediaPublish(params, media)
         console.log('newMedia', newMedia)
 
         // Now send the original request with its file replaced

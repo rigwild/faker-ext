@@ -35,7 +35,7 @@ export const errorMiddleware = (
         break
       }
       case ErrorTypeEnum.invalidContentType: {
-        res.status(400)
+        res.status(501)
         message = apiError.clientMessage || 'The provided Content-Type is not supported.'
         break
       }

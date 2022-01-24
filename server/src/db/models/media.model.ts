@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../dbConfig";
 import Post from "./post.model";
@@ -44,4 +46,6 @@ Media.init(
     timestamps: true
 }
 );
+
+
 

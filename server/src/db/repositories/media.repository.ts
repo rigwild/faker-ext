@@ -9,13 +9,8 @@ export namespace mediaRepository {
     export const getById = async (id: number): Promise<Media | null> => {
         const media = await Media.findByPk(id);
         
-        return media;
+        return media?.get({ plain: true });
     }
-
-    // <TODO>
-    // export const getByPostId  = async (id: number): Promise<Media | null> => {
-    //     return null;
-    // }
     
     export const deleteById = async (id: number) => {
         const deletedMedia = await Media.destroy({

@@ -11,4 +11,4 @@ export const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
     host: dbHost,
     port: dbPort,
     dialect: dbDriver,
-})
+});

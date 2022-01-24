@@ -1,8 +1,9 @@
+import Media from "../models/media.model";
 import Post from "../models/post.model"
 
 export namespace postRepository {
     export const create = async (post: Partial<Post>) => {
-        return await Post.create(post);
+        return await Post.create(post)
     }
     
     export const update = async (id: number, updatedPost: Partial<Post>) => {
@@ -15,7 +16,13 @@ export namespace postRepository {
     }
     
     export const getById = async (id: number): Promise<Post | null> => {
-        const post = await Post.findByPk(id);
+        const post = await Post.findByPk(id, {
+            include: [{
+                model: Media,
+                as: "medias",
+                attributes: ["id"]
+            }]
+        });
         return post;
     }
     

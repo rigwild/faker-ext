@@ -1,9 +1,12 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../dbConfig";
+import Media from "./media.model";
 
 export default class Post extends Model {
     public id!: number;
     public content!: string;
+    public medias: Media[] = [];
+    public mediaIds: number[] | undefined;
 
     // timestamps!
     public readonly createdAt!: Date;
@@ -20,10 +23,10 @@ Post.init(
         content: {
             type: new DataTypes.TEXT(),
             allowNull: false
-        }
+        },
     }, {
-        tableName: "posts",
-        sequelize,
-        timestamps: true
-    }
-)
+    tableName: "posts",
+    sequelize,
+    timestamps: true
+}
+);

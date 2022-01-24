@@ -30,19 +30,19 @@ See [Specifications.md](./specifications.md).
 ### Install dependencies
 
 ```sh
-pnpm install
+npm i -D
 ```
 
 ### Build
 
 ```sh
-pnpm build
+npm run build
 ```
 
 Automatically rebuild on changes
 
 ```sh
-pnpm build:watch
+npm run build:watch
 ```
 
 **Note** You still need to reload the extension in your browser.
@@ -68,19 +68,19 @@ Prerequisites:
 - [Node.js](https://nodejs.org/) v14+
 
 ```sh
-pnpm install
+npm i -D
 ```
 
 ### Build
 
 ```sh
-pnpm build
+npm run build
 ```
 
 ### Run
 
 ```sh
-pnpm start
+npm start
 ```
 
 ### Run in devlopment mode
@@ -88,7 +88,7 @@ pnpm start
 Running with hot-reload support
 
 ```sh
-pnpm dev
+npm run dev
 ```
 
 ## TODO

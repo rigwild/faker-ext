@@ -20,7 +20,7 @@ export type HookConfig = {
 }
 
 export abstract class FakerReplacer {
-  public static fakerPostTag = 'Posted with Faker extension ✨'
+  public static fakerPostTag = 'Posted with Faker extension'
 
   constructor(private readonly hookConfig: HookConfig) {
     this.startMessageListener()

@@ -13,6 +13,10 @@
     {
       "matches": ["*://*.linkedin.com/*"],
       "js": ["linkedin.js"]
+    },
+    {
+      "matches": ["*://*.facebook.com/*"],
+      "js": ["facebook.js"]
     }
   ]
 }

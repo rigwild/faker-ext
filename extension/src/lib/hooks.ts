@@ -142,6 +142,21 @@ function injectedFn(params: ReturnType<typeof injectedParams>) {
 
 /**
  * Generate a valid JavaScript string containing hooks
+ * Note: The injected function will not have access to other variables from this context
+ * so we pass them as parameters
+ *
+ * Generates something like this:
+ *
+ * ```ts
+ * ((params) => {
+ *  // `injectedFn` content
+ * })({
+ *   hookConfig: { ... },
+ *   hookTextPostPublish: () => { ... },
+ *   ...,
+ * });
+ * ```
+ *
  * @param hookConfig Specific website hook configuration
  * @returns A valid JavaScript string
  */

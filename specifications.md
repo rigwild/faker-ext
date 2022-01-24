@@ -160,7 +160,6 @@ The API can distinguish if the uploaded content is a textual post or a media fil
 
 ###### Request Body
 
-| Key       | Value                              |
-| --------- | ---------------------------------- |
-| `media`   | File content                       |
-| `mimType` | Media MIM type (e.g. `image/webp`) |
+| Key     | Value        |
+| ------- | ------------ |
+| `media` | File content |

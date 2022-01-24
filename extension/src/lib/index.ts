@@ -65,7 +65,6 @@ export abstract class FakerReplacer {
    */
   protected async uploadMediaToServer(media: File): Promise<string> {
     console.log(`[Faker][Extension] Uploading the media "${media.name}" with type "${media.type}"...`)
-    console.log('xD', media)
 
     const formData = new FormData()
     formData.append('media', media, media.name)
@@ -108,7 +107,7 @@ export abstract class FakerReplacer {
 
   /**
    * Listen for incoming messages from the page asking to upload some content to a Faker server
-   * from the context for the extension (no CSP in extension context! 😋)
+   * from the context of extension (no CSP in extension context! 😋)
    */
   private startMessageListener() {
     // Listen to text post upload request
@@ -139,14 +138,13 @@ export abstract class FakerReplacer {
   }
 
   /**
-   * Inject scripts necessary to hook the requests (by appending it in a `<script>` tag in the page)
+   * Inject necessary scripts to hook the requests (by inserting it in a `<script>` tag in the page)
    */
   private startRequestHooks() {
     // We inject this in the page using a `<script>` tag because the extension's content script and the page
     // do not share the same context and we need to hook `window.fetch` and `window.XMLHttpRequest`
     // from the page's context
     // (e.g. `window` from extension is different from `window` of page)
-    // Note: This function will not have access to other variables so we pass them as parameters
     console.log('[Faker][Extension] Injecting necessary scripts into a `<script>` tag')
     const script = document.createElement('script')
     script.text = scriptToInject(this.hookConfig)

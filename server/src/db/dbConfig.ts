@@ -1,4 +1,4 @@
-import { Dialect, Sequelize } from "sequelize";
+import { Dialect, Sequelize } from 'sequelize'
 
 const dbName = process.env.DB_NAME as string
 const dbUser = process.env.DB_USER as string
@@ -8,7 +8,7 @@ const dbDriver = process.env.DB_DRIVER as Dialect
 const dbPassword = process.env.DB_PASSWORD
 
 export const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
-    host: dbHost,
-    port: dbPort,
-    dialect: dbDriver,
-});
+  host: dbHost,
+  port: dbPort,
+  dialect: dbDriver
+})

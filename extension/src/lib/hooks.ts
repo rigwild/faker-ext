@@ -15,7 +15,7 @@ import { placeholderImageBase64 } from './placeholderImageBase64'
  */
 function hookTextPostPublish(params: ReturnType<typeof injectedParams>, body: any): Promise<any> {
   return new Promise((resolve, reject) => {
-    let postContent: any;
+    let postContent: any
     if (typeof body === 'object') {
       postContent = params.objectPathGet(
         body,
@@ -53,7 +53,7 @@ function hookTextPostPublish(params: ReturnType<typeof injectedParams>, body: an
           params.objectPathSet(body, params.hookConfig.textReplace.bodyContentObjectPath, newPostContent)
         } else {
           function addslashes(str: string) {
-            return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+            return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0')
           }
           body = body.replace(/(,\"text\":\")(.*?)(\")/, `$1${encodeURIComponent(addslashes(newPostContent))}$3`)
         }
@@ -130,7 +130,7 @@ function injectedFn(params: ReturnType<typeof injectedParams>) {
       if (method === params.hookConfig.textReplace.method && uri.includes(params.hookConfig.textReplace.uri)) {
         console.log('Hooked `XMLHttpRequest.prototype.send` API ROUTE textReplace', { method, uri }, arguments)
 
-        let body: any;
+        let body: any
         try {
           body = JSON.parse(bodyRaw)
         } catch {

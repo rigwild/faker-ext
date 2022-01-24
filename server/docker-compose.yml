@@ -1,4 +1,4 @@
-version: "3.0"
+version: '3.0'
 services:
   server:
     build: .
@@ -6,28 +6,30 @@ services:
     depends_on:
       - db
     ports:
-      - "3000:3000"
+      - '3000:3000'
     env_file:
       - default.env
+
   db:
     image: postgres:alpine
     restart: always
     ports:
-      - "${DB_PORT}:${DB_PORT}"
+      - '${DB_PORT}:${DB_PORT}'
     volumes:
       - db-data:/data/postgres
     environment:
-      POSTGRES_USER: "${DB_USER}"
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
-      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+      POSTGRES_DB: '${DB_NAME}'
       PGDATA: /data/postgres
-  # not mandatory
+
+  # optional
   pgadmin:
     image: dpage/pgadmin4
     depends_on:
       - db
     ports:
-      - "3001:3001"
+      - '3001:3001'
     environment:
       PGADMIN_DEFAULT_EMAIL: changeme@changeme.com
       PGADMIN_DEFAULT_PASSWORD: changeme

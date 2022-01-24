@@ -3,7 +3,9 @@ import { loadConfiguration } from './config'
 
 class FacebookFakerReplacer extends FakerReplacer {
   async renderExternallyHostedPosts() {
-    const posts = [...document.querySelectorAll('div[role="article"] > div > div > div > div > div > div:nth-child(2):not([class])')].map(x => ({
+    const posts = [
+      ...document.querySelectorAll('div[role="article"] > div > div > div > div > div > div:nth-child(2):not([class])')
+    ].map(x => ({
       postEle: x, // Post container
       postSubDescriptionEle: x.querySelector('a[role="link"] > span'), // Post publish datetime span
       postContentEle: x.getElementsByClassName('kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x c1et5uql')[0]?.parentElement // Post body
@@ -33,7 +35,8 @@ class FacebookFakerReplacer extends FakerReplacer {
 
     // Replace the posts
     for (const { postSubDescriptionEle, postContentEle, externalContent } of fakerPostsWithLoadedContent) {
-      postSubDescriptionEle.innerHTML += '<span style="color: #ff00e7; padding-left: 5px;">Loaded from Faker server ✨</span>'
+      postSubDescriptionEle.innerHTML +=
+        '<span style="color: #ff00e7; padding-left: 5px;">Loaded from Faker server ✨</span>'
       postContentEle.textContent =
         externalContent.success === true ? externalContent.post.content : externalContent.message
     }

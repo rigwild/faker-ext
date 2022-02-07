@@ -1,5 +1,5 @@
 import { FakerReplacer, isValidHttpUrl, Post } from './lib'
-import { loadConfiguration } from './config'
+import { loadConfiguration, FAKER_EXTENSION_CONFIG, chrome } from './config'
 
 class LinkedInFakerReplacer extends FakerReplacer {
   async renderExternallyHostedPosts() {
@@ -39,18 +39,20 @@ class LinkedInFakerReplacer extends FakerReplacer {
   }
 }
 
-loadConfiguration().then(({ linkedinActivated }) => {
-  if (linkedinActivated) {
-    new LinkedInFakerReplacer({
-      textReplace: {
-        method: 'POST',
-        uri: '/voyager/api/contentcreation/normShares',
-        bodyContentObjectPath: 'commentaryV2.text'
-      },
-      imageReplace: {
-        method: 'PUT',
-        uri: '/dms-uploads'
-      }
-    })
+loadConfiguration().then(() => {
+  if (FAKER_EXTENSION_CONFIG.linkedinActivated) {
+    console.log('[Faker][Extension] Faker activated for LinkedIn!')
+
+    // new LinkedInFakerReplacer(/*{
+    //   textReplace: {
+    //     method: 'POST',
+    //     uri: '/voyager/api/contentcreation/normShares',
+    //     bodyContentObjectPath: 'commentaryV2.text'
+    //   },
+    //   imageReplace: {
+    //     method: 'PUT',
+    //     uri: '/dms-uploads'
+    //   }
+    // }*/)
   }
 })

@@ -1,4 +1,6 @@
-declare var chrome: any
+export var chrome: any =
+  // @ts-ignore
+  window.chrome
 
 export type FakerConfiguration = {
   serverUri: string
@@ -18,11 +20,14 @@ const defaults: Readonly<FakerConfiguration> = Object.freeze({
   instagramActivated: false
 })
 
-export let FAKER_CONFIG: FakerConfiguration
+export let FAKER_EXTENSION_CONFIG: FakerConfiguration
+
+export const FAKER_USER_AGENT = 'faker-ext v0.1'
 
 export const loadConfiguration = async () => {
-  FAKER_CONFIG = await new Promise<FakerConfiguration>(resolve =>
-    chrome.storage.sync.get(defaults, (config: FakerConfiguration) => resolve(config))
-  )
-  return FAKER_CONFIG
+  FAKER_EXTENSION_CONFIG = await new Promise<FakerConfiguration>(resolve => {
+    chrome.storage.sync.get(defaults, (config: FakerConfiguration) => {
+      resolve(config)
+    })
+  })
 }

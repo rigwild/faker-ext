@@ -1,5 +1,5 @@
 import { FakerReplacer, isValidHttpUrl, Post } from './lib'
-import { loadConfiguration } from './config'
+import { loadConfiguration, FAKER_EXTENSION_CONFIG } from './config'
 
 class FacebookFakerReplacer extends FakerReplacer {
   async renderExternallyHostedPosts() {
@@ -43,18 +43,20 @@ class FacebookFakerReplacer extends FakerReplacer {
   }
 }
 
-loadConfiguration().then(({ facebookActivated }) => {
-  if (facebookActivated) {
-    new FacebookFakerReplacer({
-      textReplace: {
-        method: 'POST',
-        uri: '/api/graphql',
-        bodyContentObjectPath: 'commentaryV2.text'
-      },
-      imageReplace: {
-        method: 'PUT',
-        uri: '/dms-uploads'
-      }
-    })
+loadConfiguration().then(() => {
+  if (FAKER_EXTENSION_CONFIG.facebookActivated) {
+    console.log('[Faker][Extension] Faker activated for LinkedIn!')
+
+    // new FacebookFakerReplacer(/*{
+    //   textReplace: {
+    //     method: 'POST',
+    //     uri: '/api/graphql',
+    //     bodyContentObjectPath: 'commentaryV2.text'
+    //   },
+    //   imageReplace: {
+    //     method: 'PUT',
+    //     uri: '/dms-uploads'
+    //   }
+    // }*/)
   }
 })

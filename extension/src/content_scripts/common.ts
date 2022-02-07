@@ -1,4 +1,4 @@
-import { chrome } from './config'
+import { chrome } from '../config'
 
 let selectionObj: Selection = null
 let selectionEle: Element = null

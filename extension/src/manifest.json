@@ -14,15 +14,15 @@
   "content_scripts": [
     {
       "matches": ["*://*/*"],
-      "js": ["common.js"]
+      "js": ["content_scripts/common.js"]
     },
     {
       "matches": ["*://*.linkedin.com/*"],
-      "js": ["linkedin.js"]
+      "js": ["content_scripts/linkedin.js"]
     },
     {
       "matches": ["*://*.facebook.com/*"],
-      "js": ["facebook.js"]
+      "js": ["content_scripts/facebook.js"]
     }
   ]
 }

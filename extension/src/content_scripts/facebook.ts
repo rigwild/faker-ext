@@ -1,5 +1,5 @@
 import { FakerReplacer, isValidHttpUrl, Post } from './lib'
-import { loadConfiguration, FAKER_EXTENSION_CONFIG } from './config'
+import { loadConfiguration, FAKER_EXTENSION_CONFIG } from '../config'
 
 class FacebookFakerReplacer extends FakerReplacer {
   async renderExternallyHostedPosts() {

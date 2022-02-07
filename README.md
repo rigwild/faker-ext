@@ -42,7 +42,7 @@ npm run build
 Automatically rebuild on changes
 
 ```sh
-npm run build:watch
+npm run dev
 ```
 
 **Note** You still need to reload the extension in your browser.
@@ -50,8 +50,8 @@ npm run build:watch
 ### Browser install
 
 1. Head over to `chrome://extensions`
-1. Toggle "Developper mode" on
-1. Click "Load unpacked" and select the generated `extension/dist` directory
+2. Toggle "Developper mode" on
+3. Click "Load unpacked" and select the generated `extension/dist` directory
 
 Faker is now installed and working!
 

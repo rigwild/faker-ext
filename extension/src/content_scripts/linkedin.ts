@@ -1,5 +1,5 @@
 import { FakerReplacer, isValidHttpUrl, Post } from './lib'
-import { loadConfiguration, FAKER_EXTENSION_CONFIG, chrome } from './config'
+import { loadConfiguration, FAKER_EXTENSION_CONFIG } from '../config'
 
 class LinkedInFakerReplacer extends FakerReplacer {
   async renderExternallyHostedPosts() {

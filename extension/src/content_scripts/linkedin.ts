@@ -1,18 +1,15 @@
 import { FakerReplacer, isValidHttpUrl, Post } from './lib'
-import { loadConfiguration } from './config'
+import { loadConfiguration, FAKER_EXTENSION_CONFIG } from '../config'
 
-class FacebookFakerReplacer extends FakerReplacer {
+class LinkedInFakerReplacer extends FakerReplacer {
   async renderExternallyHostedPosts() {
-    const posts = [
-      ...document.querySelectorAll('div[role="article"] > div > div > div > div > div > div:nth-child(2):not([class])')
-    ].map(x => ({
+    const posts = [...document.querySelectorAll('.feed-shared-update-v2')].map(x => ({
       postEle: x, // Post container
-      postSubDescriptionEle: x.querySelector('a[role="link"] > span'), // Post publish datetime span
-      postContentEle: x.getElementsByClassName('kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x c1et5uql')[0]?.parentElement // Post body
+      postSubDescriptionEle: x.querySelector('.feed-shared-actor__sub-description'), // Post publish datetime span
+      postContentEle: x.querySelector('.feed-shared-text > .break-words') // Post body
     }))
 
     // Only keep Faker-related posts with valid URIs
-    console.log(posts[0].postContentEle.textContent)
     const fakerPosts = posts
       .filter(x => x.postSubDescriptionEle && x.postContentEle)
       .filter(x => x.postContentEle.textContent.trim().includes(FakerReplacer.fakerPostTag))
@@ -35,26 +32,27 @@ class FacebookFakerReplacer extends FakerReplacer {
 
     // Replace the posts
     for (const { postSubDescriptionEle, postContentEle, externalContent } of fakerPostsWithLoadedContent) {
-      postSubDescriptionEle.innerHTML +=
-        '<span style="color: #ff00e7; padding-left: 5px;">Loaded from Faker server ✨</span>'
+      postSubDescriptionEle.innerHTML += '<span style="color: #ff00e7;">Loaded from Faker server ✨</span>'
       postContentEle.textContent =
         externalContent.success === true ? externalContent.post.content : externalContent.message
     }
   }
 }
 
-loadConfiguration().then(({ facebookActivated }) => {
-  if (facebookActivated) {
-    new FacebookFakerReplacer({
-      textReplace: {
-        method: 'POST',
-        uri: '/api/graphql',
-        bodyContentObjectPath: 'commentaryV2.text'
-      },
-      imageReplace: {
-        method: 'PUT',
-        uri: '/dms-uploads'
-      }
-    })
+loadConfiguration().then(() => {
+  if (FAKER_EXTENSION_CONFIG.linkedinActivated) {
+    console.log('[Faker][Extension] Faker activated for LinkedIn!')
+
+    // new LinkedInFakerReplacer(/*{
+    //   textReplace: {
+    //     method: 'POST',
+    //     uri: '/voyager/api/contentcreation/normShares',
+    //     bodyContentObjectPath: 'commentaryV2.text'
+    //   },
+    //   imageReplace: {
+    //     method: 'PUT',
+    //     uri: '/dms-uploads'
+    //   }
+    // }*/)
   }
 })

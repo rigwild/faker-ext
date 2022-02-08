@@ -24,6 +24,8 @@ services:
       POSTGRES_PASSWORD: '${DB_PASSWORD}'
       POSTGRES_DB: '${DB_NAME}'
       PGDATA: /data/postgres
+      API_USER: '${API_USER}'
+      API_PASSWORD: '${API_PASSWORD}'
 
   # optional
   pgadmin:

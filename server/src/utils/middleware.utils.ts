@@ -2,6 +2,8 @@ import express from 'express'
 import { ApiError, ErrorTypeEnum } from '../errors/api.error'
 import multer from 'multer'
 import { MIM_TYPES } from '../db/models/media.model'
+import expressBasicAuth from 'express-basic-auth';
+import { apiUserService } from '../services/apiUser.service';
 
 export const asyncMiddleware =
   (fn: express.RequestHandler) => (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -49,3 +51,15 @@ export const errorMiddleware = (
     throw err
   }
 }
+
+const myAuthorizer = async (username: string, password: string, cb: any) => {
+  const valid = await apiUserService.validatePassword(username, password)
+  return cb(null, valid)
+}
+
+export const authMiddleware = expressBasicAuth({
+  authorizer: myAuthorizer,
+  authorizeAsync: true,
+})
+
+

@@ -2,12 +2,13 @@ import * as express from 'express'
 import { ApiError, ErrorTypeEnum } from '../errors/api.error'
 import { mediaService } from '../services/media.service'
 import { postService } from '../services/post.service'
-import { asyncMiddleware, mediaMiddleware } from '../utils/middleware.utils'
+import { asyncMiddleware, authMiddleware, mediaMiddleware } from '../utils/middleware.utils'
 
 const router = express.Router()
 
 router.post(
   '/upload',
+  authMiddleware,
   mediaMiddleware.single('media'),
   asyncMiddleware(async (req, res) => {
     const contentType = req.headers['content-type']

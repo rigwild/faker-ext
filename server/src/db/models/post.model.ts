@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize'
+import { DataTypes, Model, UUIDV4 } from 'sequelize'
 import { sequelize } from '../dbConfig'
 import Media from './media.model'
 
@@ -7,6 +7,7 @@ export default class Post extends Model {
   public content!: string
   public medias: Media[] = []
   public mediaIds: number[] | undefined
+  public postKey!: string
 
   // timestamps!
   public readonly createdAt!: Date
@@ -23,6 +24,10 @@ Post.init(
     content: {
       type: new DataTypes.TEXT(),
       allowNull: false
+    },
+    postKey: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4
     }
   },
   {

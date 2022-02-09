@@ -12,6 +12,11 @@ For example, with Faker, Facebook will only receive the link to the content on y
 
 Links are then replaced with the remote content when they are displayed on the webpage. You don't see any difference with a normal use of the social network.
 
+## Architecture
+![Architecture schema](./faker_archi.png)
+
+This schema can be modified by editing the source PowerPoint file `faker_archi.pptx` and export it as a PNG.
+
 ## What we do not keep from the previous project and why
 
 ### Previously developed Extension
@@ -111,7 +116,14 @@ The server is developed in TypeScript with [Express](https://expressjs.com/) and
 
 ### Database Schema
 
-TODO
+![Database schema](./Faker_db.drawio.png)
+Schema can be modified by importing the file on [draw.io](https://app.diagrams.net/)
+
+### Authentification
+To execute edit requests (`POST`, `DELETE`...), the user must be authentificated.
+Authentification is done using `basic-auth` method.
+
+The credentials must be set as environment variable (`API_USER`, `API_PASSWORD`) on the server creation.
 
 ### API
 
@@ -123,7 +135,7 @@ Load the textual post associated with the provided `id`.
 
 Load the media file associated with the provided `id`.
 
-#### `POST /api/upload`
+#### `POST /api/posts/upload`
 
 The API can distinguish if the uploaded content is a textual post or a media file by looking at the incoming `Content-Type` header.
 

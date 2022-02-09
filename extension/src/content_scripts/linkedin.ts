@@ -1,4 +1,5 @@
-import { FakerReplacer, isValidHttpUrl, Post } from './lib'
+import { FakerReplacer } from './lib'
+import { isValidHttpUrl, Post } from '../utils'
 import { loadConfiguration, FAKER_EXTENSION_CONFIG } from '../config'
 
 class LinkedInFakerReplacer extends FakerReplacer {

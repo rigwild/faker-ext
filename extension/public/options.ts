@@ -1,4 +1,5 @@
 import { createApp, reactive } from 'petite-vue'
+
 import { FakerConfiguration, loadConfiguration } from '../src/config'
 
 declare var chrome: any

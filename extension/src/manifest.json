@@ -5,7 +5,7 @@
   "description": "Host your social network content externally",
   "options_ui": {
     "page": "public/options.html",
-    "open_in_tab": false
+    "open_in_tab": true
   },
   "permissions": ["storage", "contextMenus"],
   "background": {

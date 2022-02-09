@@ -4,6 +4,7 @@ export var chrome: any =
 
 export type FakerConfiguration = {
   serverUri: string
+  serverUsername: string
   serverPassword: string
   linkedinActivated: boolean
   facebookActivated: boolean
@@ -13,7 +14,8 @@ export type FakerConfiguration = {
 
 const defaults: Readonly<FakerConfiguration> = Object.freeze({
   serverUri: 'http://localhost:3000',
-  serverPassword: 'hi',
+  serverUsername: 'admin',
+  serverPassword: 'admin',
   linkedinActivated: true,
   facebookActivated: true,
   twitterActivated: false,

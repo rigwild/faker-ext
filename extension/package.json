@@ -13,7 +13,8 @@
     "dev": "run-p build:*:watch"
   },
   "dependencies": {
-    "petite-vue": "^0.3.0"
+    "petite-vue": "^0.3.0",
+    "qrjs2": "^0.1.11"
   },
   "devDependencies": {
     "esbuild": "^0.13.8",

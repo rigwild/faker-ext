@@ -1,12 +1,12 @@
 import 'qrjs2'
 import { chrome } from '../config'
-import { filetoBase64, generateQRCode, QRCodeGenerator } from '../utils'
+import { filetoBase64, generateQRCode, loadingSvg, QRCodeGenerator } from '../utils'
 
 let selectionObj: Selection = null
 let selectionEle: Element = null
 
 // Should we watch for new file inputs?
-let monitorFileInputs = true
+let monitorFileInputs = false
 // Are we currently uploading a file? (to prevent multiple uploads)
 let isUploadingFileLock = false
 
@@ -73,7 +73,7 @@ async function fileInputHookHandler(e: Event): Promise<void> {
   // Upload the media to the self-hosted server and get its URI
   isUploadingFileLock = true
   const fullExternalUri: string = await sendMessage({
-    action: 'ASK_UPLOAD_FILE_START',
+    action: 'ASK_UPLOAD_FILE',
     fileBase64: await filetoBase64(file), // File is not auto-serializable
     websiteUrl: new URL(location.href)
   })
@@ -88,6 +88,61 @@ async function fileInputHookHandler(e: Event): Promise<void> {
 
   isUploadingFileLock = false
   ele.dispatchEvent(e)
+}
+
+function showWaitingForUploadOverlay() {
+  const overlay = document.createElement('div')
+  overlay.id = 'faker-listening-for-upload-overlay'
+  overlay.innerHTML = `
+    <div style="
+        z-index: 999;
+        position: fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        bottom: 40px;
+        right: 50px;
+        color: white;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        background-color: #4158D0;
+        background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+        padding: 5px 10px 5px 0px;
+        border-radius: 50px;
+        box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+        opacity: 0.9;
+      "
+    >
+      ${loadingSvg}
+      <span>Faker is listening for file uploads... </span>
+      <button id="faker-listening-for-upload-overlay-stop-button" style=" 
+          font-family: Arial, sans-serif;
+          font-size: 12px;
+          padding: 7px 10px;
+          margin-left: 20px;
+          border-radius: 50px;
+          border: none;
+          box-shadow: rgb(0 0 0 / 35%) 0px 2px 5px;
+          cursor: pointer;
+          background: #ffffff;
+        "
+      >
+        Stop
+      </button>
+    </div>
+  `.replace(/\n/g, '')
+
+  const svg = overlay.querySelector('svg')
+  svg.style.width = '40px'
+  svg.style.height = '40px'
+  svg.style.margin = '0 10px'
+
+  overlay.querySelector('button').addEventListener('click', e => {
+    monitorFileInputs = false
+    console.log('[Faker] Stopped the file uploads listener')
+    overlay.remove()
+  })
+  document.body.appendChild(overlay)
 }
 
 // We periodically check for new file input elements as some website like LinkedIn
@@ -122,9 +177,13 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     // Replace selected text with URI
     replaceSelectionWithStr(message.fullExternalUri)
     sendResponse()
-  } else if (message?.action === 'UPLOAD_FILE_START') {
-    // TODO: Apply global loading screen
-    console.log('[Faker] LOADING SCREEN START')
+  } else if (message?.action === 'LISTEN_FOR_FILE_UPLOAD') {
+    if (!monitorFileInputs) {
+      monitorFileInputs = true
+      console.log('[Faker] Listening for file uploads')
+      showWaitingForUploadOverlay()
+    }
+    sendResponse()
   } else {
     sendResponse({ error: 'Unknown action' })
   }

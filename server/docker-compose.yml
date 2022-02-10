@@ -9,6 +9,8 @@ services:
       - '3000:3000'
     env_file:
       - default.env
+    volumes:
+      - ./dist:/usr/src/app/dist
 
   db:
     image: postgres:alpine

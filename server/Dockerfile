@@ -1,10 +1,14 @@
 FROM node:lts-alpine3.14
 
 WORKDIR /usr/src/app
-COPY ./public .
+
+RUN npm i -g nodemon
+
 COPY package*.json .
+RUN npm i
+
+COPY ./public .
 COPY ./dist ./dist
-RUN yarn install --production
 
 EXPOSE 3000
-CMD [ "yarn", "start" ]
+CMD [ "npm", "run", "dev"]

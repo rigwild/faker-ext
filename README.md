@@ -57,8 +57,16 @@ Faker is now installed and working!
 
 ## Self-hosted server
 
+### Run with Docker
+
 ```sh
 docker compose --env-file default.env up
+```
+
+To hot-reload on changes, run this in another terminal.
+
+```sh
+npm run build:watch
 ```
 
 ### Install dependencies
@@ -83,7 +91,7 @@ npm run build
 npm start
 ```
 
-### Run in devlopment mode
+### Run in development mode
 
 Running with hot-reload support
 

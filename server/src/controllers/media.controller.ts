@@ -19,6 +19,7 @@ router.get(
     const providedPostKey = req.query.postKey
     if (providedPostKey !== media.postKey) throw new ApiError(ErrorTypeEnum.invalidPostKey)
 
+    res.setHeader('Content-Type', media.mimeType)
     res.send(media.media)
   })
 )

@@ -4,7 +4,7 @@ import path from 'path'
 import express from 'express'
 import cors from 'cors'
 import dbInit from './db/dbInit'
-import router from './controllers/router'
+import router from './controllers/index'
 import { errorMiddleware } from './utils/middleware.utils'
 
 const SERVER_PORT = process.env.SERVER_PORT ? +process.env.SERVER_PORT : 3000

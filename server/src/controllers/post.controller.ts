@@ -1,32 +1,9 @@
 import * as express from 'express'
-import { mediaService } from '../services/media.service'
 import { postService } from '../services/post.service'
-import { asyncMiddleware, authMiddleware, mediaMiddleware } from '../utils/middleware.utils'
+import { asyncMiddleware } from '../utils/middleware.utils'
 import { ApiError, ErrorTypeEnum } from '../errors/api.error'
 
 const router = express.Router()
-
-router.post(
-  '/upload',
-  authMiddleware,
-  mediaMiddleware.single('media'),
-  asyncMiddleware(async (req, res) => {
-    const contentType = req.headers['content-type']
-    if (contentType === 'application/json') {
-      const post = await postService.createPost(req.body)
-      res.json({ externalUri: `/api/posts/${post.id}?postKey=${post.postKey}` })
-      return
-    } else if (req.headers['content-type']?.startsWith('multipart/form-data')) {
-      if (req.file) {
-        const media = await mediaService.createMedia(req.file)
-        res.json({ externalUri: `/api/media/${media.id}?postKey=${media.postKey}` })
-      }
-      res.end()
-      return
-    }
-    throw new ApiError(ErrorTypeEnum.invalidContentType, `The provided Content-Type "${contentType}" is not supported.`)
-  })
-)
 
 router.get(
   '/:id',

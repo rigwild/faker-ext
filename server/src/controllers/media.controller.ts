@@ -8,16 +8,18 @@ const router = express.Router()
 router.get(
   '/:id',
   asyncMiddleware(async (req, res) => {
+    if (!req.query.postKey) throw new ApiError(ErrorTypeEnum.missingPostKey)
+
     const id = parseInt(req.params.id, 10)
     if (isNaN(id)) {
       throw new ApiError(ErrorTypeEnum.invalidType, `The id parameter must be a number.`)
     }
     const media = await mediaService.getMediaById(id)
-    res.writeHead(200, {
-      'Content-Type': media.mimType,
-      'Content-Length': media.media.length
-    })
-    res.end(media.media)
+
+    const providedPostKey = req.query.postKey
+    if (providedPostKey !== media.postKey) throw new ApiError(ErrorTypeEnum.invalidPostKey)
+
+    res.send(media.media)
   })
 )
 

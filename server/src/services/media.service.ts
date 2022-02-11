@@ -1,4 +1,4 @@
-import Media, { MimType } from '../db/models/media.model'
+import Media, { MimeType } from '../db/models/media.model'
 import { mediaRepository } from '../db/repositories/media.repository'
 import { ApiError, ErrorTypeEnum } from '../errors/api.error'
 
@@ -6,7 +6,7 @@ export module mediaService {
   export const createMedia = async (file: Express.Multer.File) => {
     const media: Partial<Media> = {
       media: file.buffer,
-      mimType: file.mimetype as MimType
+      mimeType: file.mimetype as MimeType
     }
 
     const savedMedia = await mediaRepository.create(media)

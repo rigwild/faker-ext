@@ -1,5 +1,3 @@
-import * as fs from 'fs'
-import * as path from 'path'
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../dbConfig'
 import Post from './post.model'
@@ -7,22 +5,23 @@ import Post from './post.model'
 export default class Media extends Model {
   public id!: number
   public media!: Buffer
-  public mimType!: MimType
+  public mimeType!: MimeType
   public posts: Post[] = []
+  public postKey!: string
 
   // timestamps!
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
 }
 
-export enum MimType {
+export enum MimeType {
   JPEG = 'image/jpeg',
   PNG = 'image/png',
   WEBP = 'image/webp',
   MP4 = 'video/mp4'
 }
 
-export const MIM_TYPES = new Set<string>(Object.values(MimType))
+export const MIME_TYPES = new Set<string>(Object.values(MimeType))
 
 Media.init(
   {
@@ -35,9 +34,13 @@ Media.init(
       type: DataTypes.BLOB,
       allowNull: false
     },
-    mimType: {
+    mimeType: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    postKey: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4
     }
   },
   {

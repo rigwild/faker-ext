@@ -1,7 +1,7 @@
 import express from 'express'
 import { ApiError, ErrorTypeEnum } from '../errors/api.error'
 import multer from 'multer'
-import { MIM_TYPES } from '../db/models/media.model'
+import { MIME_TYPES } from '../db/models/media.model'
 import expressBasicAuth from 'express-basic-auth'
 import { apiUserService } from '../services/apiUser.service'
 
@@ -17,7 +17,7 @@ export const mediaMiddleware = multer({
   },
   fileFilter(req, file, cb) {
     // Reject files with disallowed mime types
-    cb(null, MIM_TYPES.has(file.mimetype))
+    cb(null, MIME_TYPES.has(file.mimetype))
   }
 })
 
@@ -34,6 +34,16 @@ export const errorMiddleware = (
       case ErrorTypeEnum.invalidType: {
         res.status(400)
         message = apiError.clientMessage || 'Invalid parameter(s) type(s).'
+        break
+      }
+      case ErrorTypeEnum.missingPostKey: {
+        res.status(400)
+        message = apiError.clientMessage || 'The postKey query parameter is required.'
+        break
+      }
+      case ErrorTypeEnum.invalidPostKey: {
+        res.status(401)
+        message = apiError.clientMessage || 'The provided postKey is invalid.'
         break
       }
       case ErrorTypeEnum.invalidElementId: {

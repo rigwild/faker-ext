@@ -1,8 +1,8 @@
 import * as express from 'express'
-import { ApiError, ErrorTypeEnum } from '../errors/api.error'
 import { mediaService } from '../services/media.service'
 import { postService } from '../services/post.service'
 import { asyncMiddleware, authMiddleware, mediaMiddleware } from '../utils/middleware.utils'
+import { ApiError, ErrorTypeEnum } from '../errors/api.error'
 
 const router = express.Router()
 
@@ -31,7 +31,10 @@ router.post(
 router.get(
   '/:id',
   asyncMiddleware(async (req, res) => {
-    const id = Number(req.params.id)
+    const id = parseInt(req.params.id, 10)
+    if (isNaN(id)) {
+      throw new ApiError(ErrorTypeEnum.invalidType, `The id parameter must be a number.`)
+    }
     const post = await postService.getPostById(id)
     res.json(post)
   })

@@ -6,9 +6,7 @@ import { ApiError, ErrorTypeEnum } from '../errors/api.error'
 export module postService {
   export const getPostById = async (id: number) => {
     const post = await postRepository.getById(id)
-
-    if (!post) throw new ApiError(ErrorTypeEnum.invalidElementId, `No post with ID '${id}'`)
-
+    if (!post) throw new ApiError(ErrorTypeEnum.invalidElementId, `No post with ID "${id}"`)
     return post
   }
 

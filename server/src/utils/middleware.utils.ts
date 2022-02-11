@@ -31,6 +31,11 @@ export const errorMiddleware = (
     const apiError = err as ApiError
     let message: string
     switch (apiError.errorType) {
+      case ErrorTypeEnum.invalidType: {
+        res.status(400)
+        message = apiError.clientMessage || 'Invalid parameter(s) type(s).'
+        break
+      }
       case ErrorTypeEnum.invalidElementId: {
         res.status(404)
         message = apiError.clientMessage || 'No element with such ID.'

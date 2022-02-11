@@ -25,16 +25,16 @@ export namespace apiUserRepository {
     return !!deletedUser
   }
 
-  export const getByName = async (name: string): Promise<ApiUser | null> => {
+  export const getByUsername = async (username: string): Promise<ApiUser | null> => {
     const user = await ApiUser.findOne({ 
-      where: { name: name } 
+      where: { username } 
     });
     return user
   }
 
-  export const deleteByName = async (name: string) => {
+  export const deleteByUsername = async (username: string) => {
     const deletedUser = await ApiUser.destroy({ 
-      where: { name: name } 
+      where: { username } 
     });
     return !!deletedUser
   }

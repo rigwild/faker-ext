@@ -18,14 +18,13 @@ router.post(
       return
     } else if (req.headers['content-type']?.startsWith('multipart/form-data')) {
       if (req.file) {
-        console.log('one file...')
         const media = await mediaService.createMedia(req.file)
         res.json({ externalUri: `/api/media/${media.id}` })
       }
       res.end()
       return
     }
-    throw new ApiError(ErrorTypeEnum.invalidContentType, `The provided Content-Type '${contentType}' is not supported.`)
+    throw new ApiError(ErrorTypeEnum.invalidContentType, `The provided Content-Type "${contentType}" is not supported.`)
   })
 )
 

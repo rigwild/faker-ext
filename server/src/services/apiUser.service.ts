@@ -3,21 +3,21 @@ import { apiUserRepository } from '../db/repositories/apiUser.repository'
 import * as bcrypt from 'bcrypt';
 
 export module apiUserService {
-  export const getUserByName = async (name: string) => {
-    const user = await apiUserRepository.getByName(name)
+  export const getUserByUsername = async (username: string) => {
+    const user = await apiUserRepository.getByUsername(username)
     if (user!=null) {
       delete(user.password);
     }
     return user;
   }
 
-  export const existsByName = async (name: string): Promise<boolean> => {
-    const user = await apiUserRepository.getByName(name)
+  export const existsByUsername = async (username: string): Promise<boolean> => {
+    const user = await apiUserRepository.getByUsername(username)
     return !!user
   }
 
-  export const validatePassword = async (name: string, password: string) => {
-    const user = await apiUserRepository.getByName(name)
+  export const validatePassword = async (username: string, password: string) => {
+    const user = await apiUserRepository.getByUsername(username)
     if (!user) {
       return false;
     }
@@ -25,18 +25,18 @@ export module apiUserService {
     return await bcrypt.compare(password, user.password!);
   }
 
-  export const createUser = async (name: string, password: string) => {
+  export const createUser = async (username: string, password: string) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser: Partial<ApiUser> = {
-      name,
+      username,
       password: hashedPassword
     }
 
     const savedUser = await apiUserRepository.create(newUser)
 
-    console.log(`New user "${name}"`)
+    console.log(`Created new user "${username}"`)
 
     return savedUser
   }

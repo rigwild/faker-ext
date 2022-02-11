@@ -2,8 +2,8 @@ import express from 'express'
 import { ApiError, ErrorTypeEnum } from '../errors/api.error'
 import multer from 'multer'
 import { MIM_TYPES } from '../db/models/media.model'
-import expressBasicAuth from 'express-basic-auth';
-import { apiUserService } from '../services/apiUser.service';
+import expressBasicAuth from 'express-basic-auth'
+import { apiUserService } from '../services/apiUser.service'
 
 export const asyncMiddleware =
   (fn: express.RequestHandler) => (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -60,6 +60,7 @@ const myAuthorizer = async (username: string, password: string, cb: any) => {
 export const authMiddleware = expressBasicAuth({
   authorizer: myAuthorizer,
   authorizeAsync: true,
+  unauthorizedResponse: (req: any) => ({
+    error: req.auth ? 'Provided credentials are incorrect' : 'No credentials provided'
+  })
 })
-
-

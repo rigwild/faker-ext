@@ -17,7 +17,7 @@ const createUser = async () => {
   const username = process.env.API_USER
   const password = process.env.API_PASSWORD
 
-  if (username && password && !(await apiUserService.existsByName(username))) {
+  if (username && password && !(await apiUserService.existsByUsername(username))) {
     await apiUserService.createUser(username, password)
   }
 }

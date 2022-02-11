@@ -3,7 +3,7 @@ import { sequelize } from '../dbConfig'
 
 export default class ApiUser extends Model {
   public id!: number
-  public name!: string
+  public username!: string
   public password?: string
 
   // timestamps!
@@ -18,7 +18,7 @@ ApiUser.init(
       autoIncrement: true,
       primaryKey: true
     },
-    name: {
+    username: {
       type: new DataTypes.STRING,
       allowNull: false,
       unique: true,

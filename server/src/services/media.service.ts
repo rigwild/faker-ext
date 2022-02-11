@@ -16,7 +16,7 @@ export module mediaService {
   export const getMediaById = async (id: number) => {
     const media = await mediaRepository.getById(id)
 
-    if (!media) throw new ApiError(ErrorTypeEnum.invalidElementId, `No media with ID '${id}'`)
+    if (!media) throw new ApiError(ErrorTypeEnum.invalidElementId, `No media with ID "${id}"`)
 
     return media
   }

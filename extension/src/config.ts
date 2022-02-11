@@ -24,8 +24,6 @@ const defaults: Readonly<FakerConfiguration> = Object.freeze({
 
 export let FAKER_EXTENSION_CONFIG: FakerConfiguration
 
-export const FAKER_USER_AGENT = 'faker-ext v0.1'
-
 export const loadConfiguration = async () => {
   FAKER_EXTENSION_CONFIG = await new Promise<FakerConfiguration>(resolve => {
     chrome.storage.sync.get(defaults, (config: FakerConfiguration) => {

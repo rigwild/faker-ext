@@ -11,6 +11,7 @@ const api = express.Router()
 api.use('/posts', postController)
 api.use('/media', mediaController)
 
+api.post('/config-check', authMiddleware, (req, res) => res.end())
 
 api.post(
   '/upload',

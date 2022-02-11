@@ -95,7 +95,7 @@ function showWaitingForUploadOverlay() {
   overlay.id = 'faker-listening-for-upload-overlay'
   overlay.innerHTML = `
     <div style="
-        z-index: 999;
+        z-index: 99999999;
         position: fixed;
         display: flex;
         align-items: center;

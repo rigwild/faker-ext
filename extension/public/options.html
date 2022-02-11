@@ -12,13 +12,23 @@
       <h1>Faker configuration</h1>
 
       <h2>Storage server</h2>
-      <label for="serverUri">Storage server URI:</label>
-      <input type="text" id="serverUri" v-model="store.serverUri" @change="save" />
+      <label for="serverUri">Storage server URI</label>
+      <input type="text" id="serverUri" v-model="store.serverUri" @change="save" :disabled="isLoading" />
 
-      <label for="serverPassword">Storage server password:</label>
-      <input type="text" id="serverPassword" v-model="store.serverPassword" @change="save" />
+      <label for="serverUsername">Storage server username</label>
+      <input type="text" id="serverUsername" v-model="store.serverUsername" @change="save" :disabled="isLoading" />
 
-      <h2>Social Networks</h2>
+      <label for="serverPassword">Storage server password</label>
+      <input type="password" id="serverPassword" v-model="store.serverPassword" @change="save" :disabled="isLoading" />
+
+      <div>
+        <button @click="checkConfiguration" :disabled="isLoading">Check configuration</button>
+      </div>
+
+      <span v-if="isLoading">Checking configuration...</span>
+      <span v-if="checkConfigurationResult">{{ checkConfigurationResult }}</span>
+
+      <h2>Social Networks Integrations</h2>
       <div>
         <input type="checkbox" id="linkedinActivated" v-model="store.linkedinActivated" @change="save" />
         <label for="linkedinActivated">LinkedIn</label>

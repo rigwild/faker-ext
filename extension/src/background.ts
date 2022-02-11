@@ -27,7 +27,13 @@ async function contextMenuUploadFileHandler(
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   console.log('[Faker] Message from the content script:', message)
   if (message?.action === 'ASK_UPLOAD_FILE') {
-    const file = dataURLtoFile(message.fileBase64, 'file.png')
+    const messageFile = message.file as {
+      base64: string
+      name: string
+      type: string
+      size: number
+    }
+    const file = dataURLtoFile(messageFile.base64, messageFile.name)
     uploadMediaToServer(file, message.websiteUrl).then(fullExternalUri => sendResponse(fullExternalUri))
     // Opt-in to answer asynchronously
     return true

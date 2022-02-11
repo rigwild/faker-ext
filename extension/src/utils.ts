@@ -1,3 +1,4 @@
+import ysFixWebmDuration from 'fix-webm-duration'
 import { FAKER_EXTENSION_CONFIG, FAKER_USER_AGENT } from './config'
 
 export type Post = { content: string; timestamp: Date }
@@ -50,15 +51,110 @@ export function filetoBase64(file: File): Promise<string> {
   })
 }
 
-export function generateQRCode(QRCode: QRCodeGenerator, str: string): File {
-  const qrCode = QRCode.generatePNG(str, {
+/** @returns Data URI of the QR code (i.e. `data:image/png;base64,...`) */
+export function generateQRCode(QRCode: QRCodeGenerator, str: string): string {
+  return QRCode.generatePNG(str, {
     ecclevel: 'M',
     fillcolor: '#FFFFFF',
     textcolor: '#000000',
     margin: 2,
     modulesize: 28
   })
-  return dataURLtoFile(qrCode, 'qr.png')
+}
+
+export function imageToShortVideo(imageDataUrl: string): Promise<Blob> {
+  return new Promise(async (resolve, reject) => {
+    const canvas = document.createElement('canvas')
+    canvas.height = 1140
+    canvas.width = 1140
+
+    const ctx = canvas.getContext('2d')
+    const img = new Image()
+    img.src = imageDataUrl
+    img.onload = function () {
+      ctx.drawImage(img, 0, 0)
+    }
+
+    let x = -10
+    let y = 0
+    let step = 10
+    let dirs = [
+      [1, 0],
+      [0, 1],
+      [-1, 0],
+      [0, -1]
+    ]
+    let dirIndex = 0
+    let doneCount = 0
+    let accelerationInterval = -1
+    function draw() {
+      if (doneCount > 2) return
+
+      ctx.beginPath()
+      ctx.arc(x, y, 8, 0, 2 * Math.PI)
+      ctx.fillStyle = 'rgba(250,250,250,0.1)'
+      ctx.fill()
+
+      let [dx, dy] = dirs[dirIndex]
+      x += dx * step
+      y += dy * step
+
+      if (dirIndex === 0 && x > canvas.width) {
+        dirIndex++
+        x = canvas.width
+      } else if (dirIndex === 1 && y > canvas.height) {
+        dirIndex++
+        y = canvas.height
+      } else if (dirIndex === 2 && x < 0) {
+        dirIndex++
+        x = 0
+      } else if (dirIndex === 3 && y < 0) {
+        dirIndex = 0
+        clearInterval(accelerationInterval)
+        doneCount++
+        // console.log('done')
+        return
+      }
+
+      requestAnimationFrame(draw)
+    }
+
+    draw()
+
+    const recordedChunks = []
+    const mediaRecorder = new MediaRecorder(canvas.captureStream(60 /* FPS */), {
+      mimeType: 'video/webm'
+    })
+
+    // console.log('recording')
+    let startTime = Date.now()
+    mediaRecorder.start(1)
+
+    // Take a 3s video
+    new Promise(res => setTimeout(res, 3000)).then(() => mediaRecorder.stop())
+
+    mediaRecorder.ondataavailable = event => {
+      // console.log('ondataavailable')
+      recordedChunks.push(event.data)
+    }
+
+    mediaRecorder.onstop = async event => {
+      // console.log('onstop')
+      const buggyBlob = new Blob(recordedChunks, { type: 'video/webm' })
+
+      let duration = Date.now() - startTime
+      // console.log(buggyBlob)
+      // console.log(URL.createObjectURL(buggyBlob))
+
+      // MediaRecorder won't add proper video metadata https://bugs.chromium.org/p/chromium/issues/detail?id=642012
+      // Use this lib to fix this shit 😘
+      const fixedBlob = await ysFixWebmDuration(buggyBlob, duration /*, {logger: false}*/)
+      // console.log(fixedBlob)
+      // console.log(URL.createObjectURL(fixedBlob))
+
+      resolve(fixedBlob)
+    }
+  })
 }
 
 /**

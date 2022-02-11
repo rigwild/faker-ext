@@ -1,6 +1,6 @@
 import { createApp, reactive } from 'petite-vue'
 
-import { FakerConfiguration, FAKER_EXTENSION_CONFIG, loadConfiguration } from '../src/config'
+import { FakerConfiguration, FAKER_EXTENSION_CONFIG, FAKER_USER_AGENT, loadConfiguration } from '../src/config'
 
 declare var chrome: any
 
@@ -20,6 +20,7 @@ loadConfiguration().then(() => {
         const res = await fetch(`${serverUri}/api/config-check`, {
           method: 'POST',
           headers: {
+            'User-Agent': FAKER_USER_AGENT,
             Authorization: `Basic ${btoa(`${serverUsername}:${serverPassword}`)}`
           }
         })

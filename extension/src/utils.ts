@@ -130,8 +130,8 @@ export function imageToShortVideo(imageDataUrl: string): Promise<Blob> {
     let startTime = Date.now()
     mediaRecorder.start(1)
 
-    // Take a 3s video
-    new Promise(res => setTimeout(res, 3000)).then(() => mediaRecorder.stop())
+    // Take a 3s video (we wait 4.5s to compensate for recording lag)
+    new Promise(res => setTimeout(res, 4500)).then(() => mediaRecorder.stop())
 
     mediaRecorder.ondataavailable = event => {
       // console.log('ondataavailable')
@@ -148,9 +148,9 @@ export function imageToShortVideo(imageDataUrl: string): Promise<Blob> {
 
       // MediaRecorder won't add proper video metadata https://bugs.chromium.org/p/chromium/issues/detail?id=642012
       // Use this lib to fix this shit 😘
-      const fixedBlob = await ysFixWebmDuration(buggyBlob, duration /*, {logger: false}*/)
-      // console.log(fixedBlob)
-      // console.log(URL.createObjectURL(fixedBlob))
+      const fixedBlob = await ysFixWebmDuration(buggyBlob, duration - 1500 /*, {logger: false}*/)
+      console.log(fixedBlob)
+      console.log('[Faker] QR code video blob URI', URL.createObjectURL(fixedBlob))
 
       resolve(fixedBlob)
     }

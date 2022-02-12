@@ -12,18 +12,23 @@ See [Specifications.md](./specifications.md).
 
 - LinkedIn
   - [x] Post
-  - [ ] Image
+  - [x] Image
+  - [x] Video
 - Facebook
-  - [ ] Post
+  - [x] Post
   - [ ] Image
+  - [ ] Video
 - Twitter
   - [ ] Post
   - [ ] Image
+  - [ ] Video
 - Instagram
   - [ ] Image
+  - [ ] Video
 - Reddit
   - [ ] Post
   - [ ] Image
+  - [ ] Video
 
 ## Browser Extension
 
@@ -103,9 +108,13 @@ npm run dev
 
 - Browser Extension
   - [x] Replace post content with link to an external provider
-  - [ ] Load post content from external provider
+  - [x] Load post content from external provider
+  - [x] Configure the extension options
+  - [x] Render a link as a QR code image
+  - [x] Render a link as a QR code video
 - External Provider
   - Self-hosted server
     - [x] Post
-    - [ ] Image
+    - [x] Image
+    - [x] Video
   - [ ] IPFS

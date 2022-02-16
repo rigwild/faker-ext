@@ -40,6 +40,8 @@ npm i -D
 
 ### Build
 
+**MacOS & Linux**
+
 ```sh
 npm run build
 ```
@@ -51,6 +53,16 @@ npm run dev
 ```
 
 **Note** You still need to reload the extension in your browser.
+
+**Windows**
+
+Execute with git bash (from extension directory)
+```sh
+cd extension
+./win.sh
+```
+
+
 
 ### Browser install
 

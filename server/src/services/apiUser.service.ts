@@ -1,6 +1,6 @@
 import ApiUser from '../db/models/apiUser.model'
 import { apiUserRepository } from '../db/repositories/apiUser.repository'
-import * as bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt'
 
 export module apiUserService {
   export const getUserByUsername = async (username: string) => {

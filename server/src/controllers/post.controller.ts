@@ -1,4 +1,4 @@
-import * as express from 'express'
+import express from 'express'
 import { postService } from '../services/post.service'
 import { asyncMiddleware } from '../utils/middleware.utils'
 import { ApiError, ErrorTypeEnum } from '../errors/api.error'

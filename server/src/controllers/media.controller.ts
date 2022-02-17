@@ -1,4 +1,4 @@
-import * as express from 'express'
+import express from 'express'
 import { mediaService } from '../services/media.service'
 import { asyncMiddleware } from '../utils/middleware.utils'
 import { ApiError, ErrorTypeEnum } from '../errors/api.error'

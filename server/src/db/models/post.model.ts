@@ -1,12 +1,9 @@
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../dbConfig'
-import Media from './media.model'
 
 export default class Post extends Model {
   public id!: number
   public content!: string
-  public medias: Media[] = []
-  public mediaIds: number[] | undefined
   public postKey!: string
 
   // timestamps!

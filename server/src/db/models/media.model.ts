@@ -1,12 +1,10 @@
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../dbConfig'
-import Post from './post.model'
 
 export default class Media extends Model {
   public id!: number
   public media!: Buffer
   public mimeType!: MimeType
-  public posts: Post[] = []
   public postKey!: string
 
   // timestamps!

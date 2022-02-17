@@ -2,10 +2,9 @@ import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../dbConfig'
 
 export default class Media extends Model {
-  public id!: number
+  public id!: string
   public media!: Buffer
   public mimeType!: MimeType
-  public postKey!: string
 
   // timestamps!
   public readonly createdAt!: Date
@@ -24,8 +23,8 @@ export const MIME_TYPES = new Set<string>(Object.values(MimeType))
 Media.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
+      type: DataTypes.UUIDV4,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     media: {
@@ -35,10 +34,6 @@ Media.init(
     mimeType: {
       type: DataTypes.STRING,
       allowNull: true
-    },
-    postKey: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4
     }
   },
   {

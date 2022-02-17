@@ -20,13 +20,14 @@ api.post(
   asyncMiddleware(async (req, res) => {
     const contentType = req.headers['content-type']
     if (contentType === 'application/json') {
+      delete req.body.id
       const post = await postService.createPost(req.body)
-      res.json({ externalUri: `/faker/api/posts/${post.id}?postKey=${post.postKey}` })
+      res.json({ externalUri: `/faker/api/posts/${post.id}` })
       return
     } else if (req.headers['content-type']?.startsWith('multipart/form-data')) {
       if (req.file) {
         const media = await mediaService.createMedia(req.file)
-        res.json({ externalUri: `/faker/api/media/${media.id}?postKey=${media.postKey}` })
+        res.json({ externalUri: `/faker/api/media/${media.id}` })
       }
       res.end()
       return

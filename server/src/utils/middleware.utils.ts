@@ -13,7 +13,7 @@ export const asyncMiddleware =
 export const mediaMiddleware = multer({
   limits: {
     files: 1,
-    fileSize: 1024 * 1024 * 100 // 100MB
+    fileSize: 1024 * 1024 * 100 // 100 MB
   },
   fileFilter(req, file, cb) {
     // Reject files with disallowed mime types
@@ -36,16 +36,6 @@ export const errorMiddleware = (
         message = apiError.clientMessage || 'Invalid parameter(s) type(s).'
         break
       }
-      case ErrorTypeEnum.missingPostKey: {
-        res.status(400)
-        message = apiError.clientMessage || 'The postKey query parameter is required.'
-        break
-      }
-      case ErrorTypeEnum.invalidPostKey: {
-        res.status(401)
-        message = apiError.clientMessage || 'The provided postKey is invalid.'
-        break
-      }
       case ErrorTypeEnum.invalidElementId: {
         res.status(404)
         message = apiError.clientMessage || 'No element with such ID.'
@@ -63,7 +53,9 @@ export const errorMiddleware = (
     }
     res.send({ message })
   } else {
-    throw err
+    console.error(err)
+    res.status(500)
+    res.send({ message: 'Internal server error.' })
   }
 }
 

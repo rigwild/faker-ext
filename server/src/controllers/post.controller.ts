@@ -1,23 +1,18 @@
 import express from 'express'
+import { ApiError, ErrorTypeEnum } from '../errors/api.error'
 import { postService } from '../services/post.service'
 import { asyncMiddleware } from '../utils/middleware.utils'
-import { ApiError, ErrorTypeEnum } from '../errors/api.error'
+import { isUUIDv4 } from '../utils/utils'
 
 const router = express.Router()
 
 router.get(
   '/:id',
   asyncMiddleware(async (req, res) => {
-    if (!req.query.postKey) throw new ApiError(ErrorTypeEnum.missingPostKey)
-
-    const id = parseInt(req.params.id, 10)
-    if (isNaN(id)) throw new ApiError(ErrorTypeEnum.invalidType, `The id parameter must be a number.`)
-
-    const post = await postService.getPostById(id)
-
-    const providedPostKey = req.query.postKey
-    if (providedPostKey !== post.postKey) throw new ApiError(ErrorTypeEnum.invalidPostKey)
-
+    if (!isUUIDv4(req.params.id)) {
+      throw new ApiError(ErrorTypeEnum.invalidType, `The id parameter must be a valid uuidv4.`)
+    }
+    const post = await postService.getPostById(req.params.id)
     res.json(post)
   })
 )

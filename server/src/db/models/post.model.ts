@@ -2,9 +2,8 @@ import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../dbConfig'
 
 export default class Post extends Model {
-  public id!: number
+  public id!: string
   public content!: string
-  public postKey!: string
 
   // timestamps!
   public readonly createdAt!: Date
@@ -14,17 +13,13 @@ export default class Post extends Model {
 Post.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
+      type: DataTypes.UUIDV4,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     content: {
       type: new DataTypes.TEXT(),
       allowNull: false
-    },
-    postKey: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4
     }
   },
   {

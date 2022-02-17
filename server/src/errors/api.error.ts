@@ -12,7 +12,5 @@ export class ApiError extends Error {
 export enum ErrorTypeEnum {
   invalidType,
   invalidElementId,
-  invalidContentType,
-  missingPostKey,
-  invalidPostKey
+  invalidContentType
 }

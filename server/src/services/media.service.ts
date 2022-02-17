@@ -8,12 +8,11 @@ export module mediaService {
       media: file.buffer,
       mimeType: file.mimetype as MimeType
     }
-
     const savedMedia = await mediaRepository.create(media)
     return savedMedia
   }
 
-  export const getMediaById = async (id: number) => {
+  export const getMediaById = async (id: string) => {
     const media = await mediaRepository.getById(id)
 
     if (!media) throw new ApiError(ErrorTypeEnum.invalidElementId, `No media with ID "${id}"`)

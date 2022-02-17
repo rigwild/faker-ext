@@ -5,7 +5,7 @@ export namespace postRepository {
     return Post.create(post)
   }
 
-  export const update = async (id: number, updatedPost: Partial<Post>) => {
+  export const update = async (id: string, updatedPost: Partial<Post>) => {
     const orginalPost = await Post.findByPk(id)
     if (!orginalPost) {
       throw new Error('Not found')
@@ -13,11 +13,11 @@ export namespace postRepository {
     return orginalPost.update(updatedPost)
   }
 
-  export const getById = (id: number): Promise<Post | null> => {
+  export const getById = (id: string): Promise<Post | null> => {
     return Post.findByPk(id)
   }
 
-  export const deleteById = async (id: number) => {
+  export const deleteById = async (id: string) => {
     const deletedPost = await Post.destroy({ where: { id } })
     return !!deletedPost
   }

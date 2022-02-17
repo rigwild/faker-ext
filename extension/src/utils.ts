@@ -167,7 +167,7 @@ export async function uploadTextPostToServer(content: string, websiteURL: URL): 
   const summary = content.length > 50 ? `${content.slice(0, 50)}...` : content
   console.log(`[Faker][Background] Uploading the post "${summary}"...`)
 
-  const res = await fetch(`${FAKER_EXTENSION_CONFIG.serverUri}/api/upload`, {
+  const res = await fetch(`${FAKER_EXTENSION_CONFIG.serverUri}/faker/api/upload`, {
     method: 'POST',
     body: JSON.stringify({ content }),
     headers: {
@@ -200,7 +200,7 @@ export async function uploadMediaToServer(media: File, websiteURL: URL): Promise
   const formData = new FormData()
   formData.append('media', media)
 
-  const res = await fetch(`${FAKER_EXTENSION_CONFIG.serverUri}/api/upload`, {
+  const res = await fetch(`${FAKER_EXTENSION_CONFIG.serverUri}/faker/api/upload`, {
     method: 'POST',
     body: formData,
     headers: {
@@ -229,7 +229,7 @@ export async function uploadMediaToServer(media: File, websiteURL: URL): Promise
 export async function deleteContentFromServer(id: string): Promise<void> {
   console.log(`[Faker][Background] Deleting the post with ID "${id}"...`)
 
-  const res = await fetch(`${FAKER_EXTENSION_CONFIG.serverUri}/api/posts`, {
+  const res = await fetch(`${FAKER_EXTENSION_CONFIG.serverUri}/faker/api/posts`, {
     method: 'DELETE',
     headers: {
       'User-Agent': FAKER_USER_AGENT,

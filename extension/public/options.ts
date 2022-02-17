@@ -17,7 +17,7 @@ loadConfiguration().then(() => {
       this.checkConfigurationResult = ''
       try {
         const { serverUri, serverUsername, serverPassword } = store
-        const res = await fetch(`${serverUri}/api/config-check`, {
+        const res = await fetch(`${serverUri}/faker/api/config-check`, {
           method: 'POST',
           headers: {
             'User-Agent': FAKER_USER_AGENT,

@@ -1,5 +1,4 @@
 import ApiUser from '../models/apiUser.model'
-import Media from '../models/media.model'
 
 export namespace apiUserRepository {
   export const create = async (user: Partial<ApiUser>) => {
@@ -26,16 +25,12 @@ export namespace apiUserRepository {
   }
 
   export const getByUsername = async (username: string): Promise<ApiUser | null> => {
-    const user = await ApiUser.findOne({ 
-      where: { username } 
-    });
+    const user = await ApiUser.findOne({ where: { username } })
     return user
   }
 
   export const deleteByUsername = async (username: string) => {
-    const deletedUser = await ApiUser.destroy({ 
-      where: { username } 
-    });
+    const deletedUser = await ApiUser.destroy({ where: { username } })
     return !!deletedUser
   }
 }

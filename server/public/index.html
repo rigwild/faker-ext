@@ -7,7 +7,7 @@
     <title>Welcome to Faker server!</title>
     <style>
       html {
-        max-width: 70ch;
+        max-width: 80ch;
         padding: 1.5rem;
         margin: auto;
         line-height: 1.75rem;
@@ -16,38 +16,86 @@
       }
 
       pre {
-        background: #f4f4f4;
         padding: 15px;
-        border-radius: 10px;
         white-space: pre-wrap;
+      }
+      code {
+        padding: 5px;
+      }
+      pre,
+      code {
+        background: #f4f4f4;
+        border-radius: 5px;
       }
     </style>
   </head>
   <body>
     <h1>Welcome to the Faker server!</h1>
+
     <h2>Get a Post</h2>
     <h3>Request</h3>
-    <pre>GET <a href="hello-world">/:id</a></pre>
+    <pre>GET <a href="/faker/api/posts/12345678-abcd-4abc-abcd-123456789abc">/faker/api/posts/:id</a></pre>
 
     <h3>Response</h3>
     <pre>
 {
+  "id": "12345678-abcd-4abc-abcd-123456789abc",
   "content": "Hello world!", 
-  "timestamp": "2021-10-17T14:35:48.867Z"
+  "createdAt": "2022-02-17T17:52:07.463Z",
+  "updatedAt": "2022-02-17T17:52:07.463Z"
 }</pre
     >
+
+    <h2>Get a Media</h2>
+    <h3>Request</h3>
+    <pre>GET /faker/api/medias/:id</pre>
+
+    <h3>Response</h3>
+    <pre>&lt;file data&gt;</pre>
+
+    <hr />
 
     <h2>Add a Post</h2>
     <h3>Request</h3>
     <pre>
-POST /api/upload
+POST /faker/api/upload
+Authorization: Basic &lt;base64 of username:password&gt;
 Content-Type: application/json
 
 { "content": "hello" }</pre
     >
 
     <h3>Response</h3>
-    <pre>{ "externalUri": "<a href="/hello-world">/hello-world</a>" }</pre>
+    <pre>{
+  "externalUri": "<a href="/faker/api/posts/12345678-abcd-4abc-abcd-123456789abc">/faker/api/posts/12345678-abcd-4abc-abcd-123456789abc</a>"
+}</pre>
+
+    <h2>Add a Media</h2>
+    <h3>Request</h3>
+
+    <p>The FormData key containing your file should be <code>media</code>.</p>
+    <div>
+      Supported media MIME types:
+      <ul>
+        <li><code>image/jpeg</code></li>
+        <li><code>image/png</code></li>
+        <li><code>image/webp</code></li>
+        <li><code>video/mp4</code></li>
+      </ul>
+    </div>
+
+    <pre>
+POST /faker/api/upload
+Authorization: Basic &lt;base64 of username:password&gt;
+Content-Type: multipart/form-data</pre
+    >
+
+    <h3>Response</h3>
+    <pre>
+{
+  "externalUri": "/faker/api/medias/12345678-abcd-4abc-abcd-123456789abc"
+}</pre
+    >
 
     <div style="text-align: right">
       <a href="https://github.com/rigwild/faker-ext">GitHub</a>

@@ -11,6 +11,7 @@ services:
       - default.env
     volumes:
       - ./dist:/usr/src/app/dist
+      - ./public:/usr/src/app/public
 
   db:
     image: postgres:alpine

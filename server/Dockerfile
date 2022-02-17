@@ -7,7 +7,7 @@ RUN npm i -g nodemon
 COPY package*.json .
 RUN npm i
 
-COPY ./public .
+COPY ./public ./public
 COPY ./dist ./dist
 
 EXPOSE 3000

@@ -277,12 +277,15 @@ export abstract class FakerReplacer {
   /** Apply feed posts content transformation in the DOM */
   abstract renderExternallyHostedPosts(): Promise<void>
 
-  protected injectStrAtPosition(
+  protected textPostCache = new Map<string, Post>()
+
+  protected replaceStrAtPosition(
     str: string,
     postContentEle: Element,
     url: string,
     urlPositionIndex: number,
-    linkOffset: number
+    linkOffset: number,
+    isError: boolean
   ): number {
     // Inject the post content into a span with textContent first to prevent XSS
     const tempEle = document.createElement('div')
@@ -290,10 +293,10 @@ export abstract class FakerReplacer {
     span.textContent = str
     span.style.color = 'white'
     span.style.borderRadius = '5px'
-    span.style.backgroundColor = '#3a3a3a'
     span.style.padding = '1px 2px'
+    span.style.backgroundColor = !isError ? '#3a3a3a' : '#e00404'
     tempEle.append(span)
-    const spanHTML = tempEle.innerHTML
+    const elementToInject = tempEle.innerHTML
 
     // Inject the sanitized post content into the post container
     const postHTML = postContentEle.innerHTML
@@ -302,9 +305,9 @@ export abstract class FakerReplacer {
     //  console.log(postHTMLBefore)
     //  console.log(spanHTML)
     //  console.log(postHTMLAfter)
-    postContentEle.innerHTML = postHTMLBefore + spanHTML + postHTMLAfter
+    postContentEle.innerHTML = postHTMLBefore + elementToInject + postHTMLAfter
 
-    const newLinkOffset = linkOffset + spanHTML.length - url.length
+    const newLinkOffset = linkOffset + elementToInject.length - url.length
     return newLinkOffset
   }
 

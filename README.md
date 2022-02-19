@@ -32,6 +32,10 @@ See [Specifications.md](./specifications.md).
 
 ## Browser Extension
 
+```sh
+cd extension
+```
+
 ### Install dependencies
 
 ```sh
@@ -57,12 +61,11 @@ npm run dev
 **Windows**
 
 Execute with git bash (from extension directory)
+
 ```sh
 cd extension
 ./win.sh
 ```
-
-
 
 ### Browser install
 
@@ -73,6 +76,10 @@ cd extension
 Faker is now installed and working!
 
 ## Self-hosted server
+
+```sh
+cd server
+```
 
 ### Run with Docker
 

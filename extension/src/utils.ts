@@ -197,7 +197,7 @@ export async function uploadTextPostToServer(content: string, websiteURL: URL): 
       Authorization: `Basic ${btoa(
         `${FAKER_EXTENSION_CONFIG.serverUsername}:${FAKER_EXTENSION_CONFIG.serverPassword}`
       )}`,
-      'X-Faker-Domain': websiteURL.hostname
+      'X-Faker-Domain': websiteURL?.hostname
     }
   })
   const resJson = await res.json()
@@ -229,7 +229,7 @@ export async function uploadMediaToServer(media: File, websiteURL: URL): Promise
       Authorization: `Basic ${btoa(
         `${FAKER_EXTENSION_CONFIG.serverUsername}:${FAKER_EXTENSION_CONFIG.serverPassword}`
       )}`,
-      'X-Faker-Domain': websiteURL.hostname
+      'X-Faker-Domain': websiteURL?.hostname
     }
   })
   const resJson = await res.json()

@@ -42,6 +42,9 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 })
 
+// Open extension options page on extension icon click
+chrome.browserAction.onClicked.addListener(() => chrome.runtime.openOptionsPage())
+
 loadConfiguration().then(() => {
   chrome.contextMenus.create({
     title: 'Replace text using Faker',

@@ -13,38 +13,96 @@
 
       <h2>Storage server</h2>
       <label for="serverUri">Storage server URI</label>
-      <input type="text" id="serverUri" v-model="store.serverUri" @change="save" :disabled="isLoading" />
+      <input
+        type="text"
+        id="serverUri"
+        v-model="configurationStore.serverUri"
+        @change="save"
+        :disabled="isLoadingConfigCheck"
+      />
 
       <label for="serverUsername">Storage server username</label>
-      <input type="text" id="serverUsername" v-model="store.serverUsername" @change="save" :disabled="isLoading" />
+      <input
+        type="text"
+        id="serverUsername"
+        v-model="configurationStore.serverUsername"
+        @change="save"
+        :disabled="isLoadingConfigCheck"
+      />
 
       <label for="serverPassword">Storage server password</label>
-      <input type="password" id="serverPassword" v-model="store.serverPassword" @change="save" :disabled="isLoading" />
+      <input
+        type="password"
+        id="serverPassword"
+        v-model="configurationStore.serverPassword"
+        @change="save"
+        :disabled="isLoadingConfigCheck"
+      />
 
       <div>
-        <button @click="checkConfiguration" :disabled="isLoading">Check configuration</button>
+        <button @click="checkConfiguration" :disabled="isLoadingConfigCheck">Check configuration</button>
       </div>
 
-      <span v-if="isLoading">Checking configuration...</span>
+      <span v-if="isLoadingConfigCheck">Checking configuration...</span>
       <span v-if="checkConfigurationResult">{{ checkConfigurationResult }}</span>
 
       <h2>Social Networks Integrations</h2>
       <div>
-        <input type="checkbox" id="linkedinActivated" v-model="store.linkedinActivated" @change="save" />
+        <input type="checkbox" id="linkedinActivated" v-model="configurationStore.linkedinActivated" @change="save" />
         <label for="linkedinActivated">LinkedIn</label>
       </div>
       <div>
-        <input type="checkbox" id="facebookActivated" v-model="store.facebookActivated" @change="save" />
+        <input type="checkbox" id="facebookActivated" v-model="configurationStore.facebookActivated" @change="save" />
         <label for="facebookActivated">Facebook</label>
       </div>
       <div>
-        <input type="checkbox" id="twitterActivated" v-model="store.twitterActivated" @change="save" disabled />
+        <input
+          type="checkbox"
+          id="twitterActivated"
+          v-model="configurationStore.twitterActivated"
+          @change="save"
+          disabled
+        />
         <label for="twitterActivated">Twitter</label>
       </div>
       <div>
-        <input type="checkbox" id="instagramActivated" v-model="store.instagramActivated" @change="save" disabled />
+        <input
+          type="checkbox"
+          id="instagramActivated"
+          v-model="configurationStore.instagramActivated"
+          @change="save"
+          disabled
+        />
         <label for="instagramActivated">Instagram</label>
       </div>
+
+      <h1>Upload with Faker</h1>
+      <p>
+        Uploading with Faker may not work on some websites. Use this tool to get a link that you can publish anywhere.
+      </p>
+
+      <div style="margin-bottom: 10px">
+        <input type="radio" id="uploadTypeText" value="text" v-model="uploadWhatType" />
+        <label for="uploadTypeText">Upload some text</label>
+        <br />
+        <input type="radio" id="uploadTypeFile" value="file" v-model="uploadWhatType" />
+        <label for="uploadTypeFile">Upload a file</label>
+      </div>
+
+      <div v-if="uploadWhatType === 'text'">
+        <label for="uploadText">Text to upload</label>
+        <textarea id="uploadText" v-model="uploadText" :disabled="isLoadingUpload"></textarea>
+
+        <button @click="upload" :disabled="isLoadingUpload">Upload!</button>
+      </div>
+      <div v-else-if="uploadWhatType === 'file'">
+        <label for="uploadFile">File to upload</label>
+        <input type="file" id="uploadFile" @change="upload" :disabled="isLoadingUpload" />
+      </div>
+
+      <span v-if="isLoadingUpload">Uploading...</span>
+      <span v-if="uploadResult">{{ uploadResult }}</span>
+      <textarea v-if="uploadResultLink" type="text" rows="1" readonly>{{ uploadResultLink }}</textarea>
     </div>
 
     <div style="text-align: center">

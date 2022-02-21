@@ -20,9 +20,16 @@ function sendMessage(message: any): Promise<any> {
  * Replace the selected text with the given text
  *
  * Supports custom editable elements (like paragraphs) and input/textarea elements
+ *
+ * This includes multiple crappy hacks or deprecated stuff
  * @param str New text to replace the selected text with
  */
 function replaceSelectionWithStr(str: string) {
+  // See https://stackoverflow.com/a/59582075
+  // This is deprecated but still works in chrome 98
+  document.execCommand('insertText', false, str)
+  return
+
   // Check if the element is an input/textarea
   // (the Selection API doesn't work on inputs/textareas)
   // See https://stackoverflow.com/a/20427804
@@ -32,17 +39,31 @@ function replaceSelectionWithStr(str: string) {
   }
   // Element is not an input/textarea, but is editable using the Selection API
   else {
-    const newNode = document.createTextNode(str)
-
-    // Remove currently selected text
-    selectionObj.deleteFromDocument()
-
-    // Insert new text
-    const range = selectionObj.getRangeAt(0)
-    range.insertNode(newNode)
-
-    // Move the cursor to the end of the inserted text
-    selectionObj.collapse(newNode, 1)
+    // This shit is deprecated but the browsers have not yet settled on a proper replacement yet
+    // If it stops to work, try this (will not work with every editable elements)
+    // A hack to paste some text into an editable element
+    // See https://stackoverflow.com/a/63643176
+    // let dataTransfer = new DataTransfer()
+    // dataTransfer.setData('text/plain', str)
+    // selectionEle.dispatchEvent(
+    //   new ClipboardEvent('paste', {
+    //     clipboardData: dataTransfer,
+    //     bubbles: true,
+    //     cancelable: true
+    //   })
+    // )
+    // dataTransfer.clearData()
+    //
+    //
+    // Old trick, does not work if the website uses a js framework like React
+    // const newNode = document.createTextNode(str)
+    // // Remove currently selected text
+    // selectionObj.deleteFromDocument()
+    // // Insert new text
+    // const range = selectionObj.getRangeAt(0)
+    // range.insertNode(newNode)
+    // // Move the cursor to the end of the inserted text
+    // selectionObj.collapse(newNode, 1)
   }
 }
 

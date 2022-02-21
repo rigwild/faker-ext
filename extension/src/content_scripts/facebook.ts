@@ -1,62 +1,65 @@
-// import { FakerReplacer,, Post } from '../utils'
-// import { loadConfiguration, FAKER_EXTENSION_CONFIG } from '../config'
+import { FakerReplacer, getValidFakerUrlsFromString } from '../utils'
+import { loadConfiguration, FAKER_EXTENSION_CONFIG } from '../config'
 
-// class FacebookFakerReplacer extends FakerReplacer {
-//   async renderExternallyHostedPosts() {
-//     const posts = [
-//       ...document.querySelectorAll('div[role="article"] > div > div > div > div > div > div:nth-child(2):not([class])')
-//     ].map(x => ({
-//       postEle: x, // Post container
-//       postSubDescriptionEle: x.querySelector('a[role="link"] > span'), // Post publish datetime span
-//       postContentEle: x.getElementsByClassName('kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x c1et5uql')[0]?.parentElement // Post body
-//     }))
+class FacebookFakerReplacer extends FakerReplacer {
+  async renderExternallyHostedPosts() {
+    const posts = [
+      ...document.querySelectorAll('div[role="article"] > div > div > div > div > div > div:nth-child(2):not([class])')
+    ].map(x => ({
+      postEle: x, // Post container
+      postSubDescriptionEle: x.querySelector('a[role="link"] > span'), // Post publish datetime span
+      postContentEle: x.getElementsByClassName('kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x c1et5uql')[0]?.parentElement // Post body
+    }))
 
-//     // Only keep Faker-related posts with valid URIs
-//     console.log(posts[0].postContentEle.textContent)
-//     const fakerPosts = posts
-//       .filter(x => x.postSubDescriptionEle && x.postContentEle)
-//       .filter(x => x.postContentEle.textContent.trim().includes(FakerReplacer.fakerPostTag))
-//       .map(x => ({ ...x, uri: x.postContentEle.textContent.replace(FakerReplacer.fakerPostTag, '').trim() }))
-//       .filter(x => isValidHttpUrl(x.uri))
+    // Only keep posts containing valid Faker URIs
+    const fakerPosts = posts
+      .filter(x => x.postEle && x.postSubDescriptionEle && x.postContentEle)
+      .map(x => ({ ...x, regexMatchedUrls: getValidFakerUrlsFromString(x.postContentEle.innerHTML) }))
+      .filter(x => x.regexMatchedUrls.length > 0)
 
-//     // Load external content
-//     const fakerPostsWithLoadedContent = await Promise.all(
-//       fakerPosts.map(async x => {
-//         let externalContent: { post: Post; success: true } | { message: string; success: false }
-//         try {
-//           externalContent = { post: await this.loadContentFromServer(x.uri), success: true }
-//         } catch (error) {
-//           console.error(`[Faker] Failed to load external content for uri "${x.uri}"`, error)
-//           externalContent = { message: `Faker Error: ${error.message}`, success: false }
-//         }
-//         return { ...x, externalContent }
-//       })
-//     )
+    // console.log(fakerPosts)
 
-//     // Replace the posts
-//     for (const { postSubDescriptionEle, postContentEle, externalContent } of fakerPostsWithLoadedContent) {
-//       postSubDescriptionEle.innerHTML +=
-//         '<span style="color: #ff00e7; padding-left: 5px;">Loaded from Faker server ✨</span>'
-//       postContentEle.textContent =
-//         externalContent.success === true ? externalContent.post.content : externalContent.message
-//     }
-//   }
-// }
+    // Load external content
+    await Promise.all(
+      fakerPosts.map(async aFakerPost => {
+        // Compute the offset of the currently replaced link
+        // (so the next replaced link in this post can be replaced at the appropriate positions)
+        let linkOffset = 0
+        for (const aUrlMatch of aFakerPost.regexMatchedUrls) {
+          const { 0: url, index: urlPositionIndex } = aUrlMatch
 
-// loadConfiguration().then(() => {
-//   if (FAKER_EXTENSION_CONFIG.facebookActivated) {
-//     console.log('[Faker][Extension] Faker activated for LinkedIn!')
+          const { textPost, isError } = await this.getTextPost(url)
 
-//     // new FacebookFakerReplacer(/*{
-//     //   textReplace: {
-//     //     method: 'POST',
-//     //     uri: '/api/graphql',
-//     //     bodyContentObjectPath: 'commentaryV2.text'
-//     //   },
-//     //   imageReplace: {
-//     //     method: 'PUT',
-//     //     uri: '/dms-uploads'
-//     //   }
-//     // }*/)
-//   }
-// })
+          const newLinkOffset = this.replaceStrAtPosition(
+            textPost.content,
+            aFakerPost.postContentEle,
+            url,
+            urlPositionIndex,
+            linkOffset,
+            isError
+          )
+          linkOffset = newLinkOffset
+        }
+
+        // Show that the post was replaced by Faker
+        if (!aFakerPost.postSubDescriptionEle.innerHTML.includes('Faker')) {
+          aFakerPost.postSubDescriptionEle.innerHTML +=
+            '<span style="' +
+            'color: white;' +
+            'border-radius: 5px;' +
+            'padding: 1px 4px;' +
+            'background-color: rgb(65, 88, 208);' +
+            'background-image: linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%);' +
+            '">Loaded using Faker ✨</span>'
+        }
+      })
+    )
+  }
+}
+
+loadConfiguration().then(() => {
+  if (FAKER_EXTENSION_CONFIG.facebookActivated) {
+    console.log('[Faker][Extension] Faker activated for Facebook!')
+    new FacebookFakerReplacer()
+  }
+})

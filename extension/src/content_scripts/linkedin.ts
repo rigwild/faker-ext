@@ -1,4 +1,4 @@
-import { FakerReplacer, getValidFakerUrlsFromString, loadTextPostFromServer, Post } from '../utils'
+import { FakerReplacer, getValidFakerUrlsFromString } from '../utils'
 import { loadConfiguration, FAKER_EXTENSION_CONFIG } from '../config'
 
 class LinkedInFakerReplacer extends FakerReplacer {
@@ -24,24 +24,9 @@ class LinkedInFakerReplacer extends FakerReplacer {
         // (so the next replaced link in this post can be replaced at the appropriate positions)
         let linkOffset = 0
         for (const aUrlMatch of aFakerPost.regexMatchedUrls) {
-          const { index: urlPositionIndex, 0: url } = aUrlMatch
-          let isError = false
-          let textPost: Post
+          const { 0: url, index: urlPositionIndex } = aUrlMatch
 
-          try {
-            if (this.textPostCache.has(url)) {
-              textPost = this.textPostCache.get(url)
-            } else {
-              textPost = await loadTextPostFromServer(url)
-              this.textPostCache.set(url, textPost)
-            }
-          } catch (error) {
-            isError = true
-            console.log(`[Faker] Failed to load external content for uri "${url}"`, error)
-            if (error.message.startsWith('No post with ID')) error.message = 'Content not found'
-            textPost = { content: `Faker Error: ${error.message}` } as Post
-            this.textPostCache.set(url, textPost)
-          }
+          const { textPost, isError } = await this.getTextPost(url)
 
           const newLinkOffset = this.replaceStrAtPosition(
             textPost.content,
@@ -55,14 +40,16 @@ class LinkedInFakerReplacer extends FakerReplacer {
         }
 
         // Show that the post was replaced by Faker
-        aFakerPost.postSubDescriptionEle.innerHTML +=
-          '<span style="' +
-          'color: white;' +
-          'border-radius: 5px;' +
-          'padding: 1px 4px;' +
-          'background-color: rgb(65, 88, 208);' +
-          'background-image: linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%);' +
-          '">Loaded using Faker ✨</span>'
+        if (!aFakerPost.postSubDescriptionEle.innerHTML.includes('Faker')) {
+          aFakerPost.postSubDescriptionEle.innerHTML +=
+            '<span style="' +
+            'color: white;' +
+            'border-radius: 5px;' +
+            'padding: 1px 4px;' +
+            'background-color: rgb(65, 88, 208);' +
+            'background-image: linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%);' +
+            '">Loaded using Faker ✨</span>'
+        }
       })
     )
   }

@@ -279,6 +279,32 @@ export abstract class FakerReplacer {
 
   protected textPostCache = new Map<string, Post>()
 
+  protected async getTextPost(url: string): Promise<{ textPost: Post; isError: boolean }> {
+    let textPost: Post
+    let isError = false
+
+    try {
+      if (this.textPostCache.has(url)) {
+        textPost = this.textPostCache.get(url)
+      } else {
+        textPost = await loadTextPostFromServer(url)
+        this.textPostCache.set(url, textPost)
+      }
+    } catch (error) {
+      isError = true
+      console.log(`[Faker] Failed to load external content for uri "${url}"`, error)
+
+      if (error.message.startsWith('No post with ID')) {
+        error.message = 'Content not found'
+      }
+
+      textPost = { content: `Faker Error: ${error.message}` } as Post
+      this.textPostCache.set(url, textPost)
+    }
+
+    return { textPost, isError }
+  }
+
   protected replaceStrAtPosition(
     str: string,
     postContentEle: Element,

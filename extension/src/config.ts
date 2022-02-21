@@ -18,7 +18,7 @@ const defaults: Readonly<FakerConfiguration> = Object.freeze({
   serverPassword: 'admin',
   linkedinActivated: true,
   facebookActivated: true,
-  twitterActivated: false,
+  twitterActivated: true,
   instagramActivated: false
 })
 

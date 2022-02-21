@@ -22,6 +22,10 @@
     {
       "matches": ["*://*.facebook.com/*"],
       "js": ["content_scripts/facebook.js"]
+    },
+    {
+      "matches": ["*://*.twitter.com/*"],
+      "js": ["content_scripts/twitter.js"]
     }
   ]
 }

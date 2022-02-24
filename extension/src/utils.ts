@@ -74,67 +74,58 @@ export function imageToShortVideo(imageDataUrl: string): Promise<Blob> {
     const ctx = canvas.getContext('2d')
     const img = new Image()
     img.src = imageDataUrl
+
     img.onload = function () {
       ctx.drawImage(img, 0, 0)
     }
 
-    let x = -10
-    let y = 0
-    let step = 10
-    let dirs = [
-      [1, 0],
-      [0, 1],
-      [-1, 0],
-      [0, -1]
-    ]
-    let dirIndex = 0
-    let doneCount = 0
-    let accelerationInterval = -1
-    function draw() {
-      if (doneCount > 2) return
-
+    const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min
+    const drawDot = (x: number, y: number) => {
       ctx.beginPath()
-      ctx.arc(x, y, 8, 0, 2 * Math.PI)
-      ctx.fillStyle = 'rgba(250,250,250,0.1)'
+      ctx.arc(x, y, 2, 0, 2 * Math.PI)
+      ctx.fillStyle = `rgba(${rand(0, 254)}, ${rand(0, 254)}, ${rand(0, 254)}, 1)`
       ctx.fill()
+    }
 
-      let [dx, dy] = dirs[dirIndex]
-      x += dx * step
-      y += dy * step
+    // Draw dots at the bottom just to make the file size bigger
+    // (LinkedIn doesn't accept videos with a size smaller than 75 KB)
+    let isDrawingNewDots = true
+    let lastDraw = 0
+    let finished = false
 
-      if (dirIndex === 0 && x > canvas.width) {
-        dirIndex++
-        x = canvas.width
-      } else if (dirIndex === 1 && y > canvas.height) {
-        dirIndex++
-        y = canvas.height
-      } else if (dirIndex === 2 && x < 0) {
-        dirIndex++
-        x = 0
-      } else if (dirIndex === 3 && y < 0) {
-        dirIndex = 0
-        clearInterval(accelerationInterval)
-        doneCount++
-        // console.log('done')
-        return
+    function draw() {
+      if (isDrawingNewDots) {
+        for (let i = 0; i < 20; i++) {
+          let x = rand(300, canvas.width - 300)
+          let y = rand(canvas.height - 30, canvas.height - 10)
+          drawDot(x, y)
+        }
       }
 
-      requestAnimationFrame(draw)
+      // Remove the dots once in a while
+      if (lastDraw > 20) {
+        ctx.drawImage(img, 0, 0)
+        lastDraw = 0
+      }
+      lastDraw++
+      if (!finished) requestAnimationFrame(draw)
     }
 
     draw()
 
     const recordedChunks = []
-    const mediaRecorder = new MediaRecorder(canvas.captureStream(60 /* FPS */), {
-      mimeType: 'video/webm'
-    })
+    const mediaRecorder = new MediaRecorder(canvas.captureStream(60 /* FPS */), { mimeType: 'video/webm' })
 
     // console.log('recording')
     let startTime = Date.now()
     mediaRecorder.start(1)
 
     // Take a 3s video (we wait 4.5s to compensate for recording lag)
-    new Promise(res => setTimeout(res, 4500)).then(() => mediaRecorder.stop())
+    new Promise(res => setTimeout(res, 4500)).then(() => {
+      mediaRecorder.stop()
+      finished = true
+      canvas.remove()
+    })
 
     mediaRecorder.ondataavailable = event => {
       // console.log('ondataavailable')

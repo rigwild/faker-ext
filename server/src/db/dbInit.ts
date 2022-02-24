@@ -2,7 +2,7 @@ import Media from './models/media.model'
 import Post from './models/post.model'
 import ApiUser from './models/apiUser.model'
 import { apiUserService } from '../services/apiUser.service'
-import { postService } from '../services/post.service'
+import { postRepository } from '../db/repositories/post.repository'
 
 const dbInit = async () => {
   await Post.sync({ alter: true })
@@ -25,9 +25,9 @@ const createUser = async () => {
 
 const createHelloWorldPost = async () => {
   const id = '12345678-abcd-4abc-abcd-123456789abc'
-  if (!(await postService.getPostById(id))) {
+  if (!(await postRepository.getById(id))) {
     console.log(`Creating hello world post`)
-    await postService.createPost({ id, content: 'Hello world!' })
+    await postRepository.create({ id, content: 'Hello world!' })
   }
 }
 

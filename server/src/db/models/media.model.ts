@@ -23,7 +23,7 @@ export const MIME_TYPES = new Set<string>(Object.values(MimeType))
 Media.init(
   {
     id: {
-      type: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },

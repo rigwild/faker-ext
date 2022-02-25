@@ -117,8 +117,20 @@ class LinkedInFakerReplacer extends FakerReplacer {
         }
 
         // Replace the media with the external content
-        if (mediaType === 'image') imgEle.src = qrCodeDataResultURL.href
-        else if (mediaType === 'video') videoEle.src = qrCodeDataResultURL.href
+        if (mediaType === 'image') {
+          imgEle.src = qrCodeDataResultURL.href
+          imgEle.style.border = 'solid 4px transparent'
+          imgEle.style.borderRadius = '15px'
+          imgEle.style.backgroundImage =
+            'linear-gradient(white, white), linear-gradient(43deg, rgb(65, 88, 208), rgb(200, 80, 192),rgb(255, 204, 112))'
+          imgEle.style.backgroundOrigin = 'border-box'
+          imgEle.style.backgroundClip = 'content-box, border-box'
+        } else if (mediaType === 'video') {
+          videoEle.src = qrCodeDataResultURL.href
+          videoEle.style.border = '5px solid transparent'
+          videoEle.style.borderImage =
+            'linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%) 5'
+        }
 
         this.addLoadedUsingFakerTag(aFakerPost)
       })

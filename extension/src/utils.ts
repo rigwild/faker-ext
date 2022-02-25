@@ -76,19 +76,44 @@ export function generateQRCode(QRCode: QRCodeGenerator, str: string): string {
   })
 }
 
+// export function getVideoFrame()
+
 /**
  * Dodge `The canvas has been tainted by cross-origin data` error by fetching the <img>.src
  * then getting its blob URL
  */
-export async function loadImageThenGetBlobURL(imgURI: string): Promise<string> {
+export async function loadFileThenGetBlobURL(imgURI: string): Promise<string> {
   const response = await fetch(imgURI)
   const imageBlob = await response.blob()
   return URL.createObjectURL(imageBlob)
 }
 
+/** Capture a video frame from the video element */
+export async function getVideoFrame(videoURI: string): Promise<string> {
+  const blobURL = await loadFileThenGetBlobURL(videoURI)
+  const video = document.createElement('video')
+  return new Promise((resolve, reject) => {
+    video.onloadedmetadata = function () {
+      video.currentTime = 0
+    }
+    video.onseeked = function (e) {
+      const canvas = document.createElement('canvas')
+      canvas.height = video.videoHeight
+      canvas.width = video.videoWidth
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+      resolve(canvas.toDataURL())
+      canvas.remove()
+      video.remove()
+    }
+    video.src = blobURL
+  })
+}
+
 /** Read a QR Code by passing an image URI */
 export async function readQRCode(imgURI: string) {
-  const blobURL = await loadImageThenGetBlobURL(imgURI)
+  const blobURL = await loadFileThenGetBlobURL(imgURI)
 
   const image = new Image()
   image.src = blobURL
@@ -104,6 +129,7 @@ export async function readQRCode(imgURI: string) {
   const imageData = context.getImageData(0, 0, image.width, image.height)
 
   const code = jsQR(imageData.data, image.width, image.height)
+  canvas.remove()
   return code
 }
 

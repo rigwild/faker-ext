@@ -1,4 +1,4 @@
-import { FakerReplacer, getValidFakerUrlsFromString, isValidHttpUrl, readQRCode } from '../utils'
+import { FakerReplacer, getValidFakerUrlsFromString, getVideoFrame, isValidHttpUrl, readQRCode } from '../utils'
 import { loadConfiguration, FAKER_EXTENSION_CONFIG } from '../config'
 
 class LinkedInFakerReplacer extends FakerReplacer {
@@ -95,12 +95,9 @@ class LinkedInFakerReplacer extends FakerReplacer {
           return
         }
 
-        let imageDataURI = imgSrc
-        // Media is a video, extract a frame from it
-        if (mediaType === 'video') {
-          // TODO: extract frame from video
-          throw new Error('Video not implemented')
-        }
+        let imageDataURI: string
+        if (mediaType === 'image') imageDataURI = imgSrc
+        if (mediaType === 'video') imageDataURI = await getVideoFrame(videoSrc)
 
         this.currentlyLoadingURLs.add(mediaSrc)
         const qrCodeData = await readQRCode(imageDataURI)

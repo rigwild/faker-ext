@@ -1,3 +1,4 @@
+import jsQR from 'jsqr'
 import ysFixWebmDuration from 'fix-webm-duration'
 import { FAKER_EXTENSION_CONFIG, FAKER_USER_AGENT } from './config'
 
@@ -16,6 +17,16 @@ export type QRCodeGenerator = {
 }
 
 export const delay = (ms: number): Promise<void> => new Promise(res => setTimeout(res, ms))
+
+export const isValidHttpUrl = (str: string) => {
+  let url: URL
+  try {
+    url = new URL(str)
+  } catch {
+    return false
+  }
+  return url.protocol === 'http:' || url.protocol === 'https:'
+}
 
 /** @see https://stackoverflow.com/a/3809435 */
 export const getValidFakerUrlsFromString = (str: string): RegExpMatchArray[] => {
@@ -63,6 +74,37 @@ export function generateQRCode(QRCode: QRCodeGenerator, str: string): string {
     margin: 2,
     modulesize: 28
   })
+}
+
+/**
+ * Dodge `The canvas has been tainted by cross-origin data` error by fetching the <img>.src
+ * then getting its blob URL
+ */
+export async function loadImageThenGetBlobURL(imgURI: string): Promise<string> {
+  const response = await fetch(imgURI)
+  const imageBlob = await response.blob()
+  return URL.createObjectURL(imageBlob)
+}
+
+/** Read a QR Code by passing an image URI */
+export async function readQRCode(imgURI: string) {
+  const blobURL = await loadImageThenGetBlobURL(imgURI)
+
+  const image = new Image()
+  image.src = blobURL
+  await new Promise(resolve => image.addEventListener('load', resolve))
+
+  const canvas = document.createElement('canvas')
+  canvas.width = image.width
+  canvas.height = image.height
+  const context = canvas.getContext('2d')
+
+  context.imageSmoothingEnabled = false
+  context.drawImage(image, 0, 0)
+  const imageData = context.getImageData(0, 0, image.width, image.height)
+
+  const code = jsQR(imageData.data, image.width, image.height)
+  return code
 }
 
 export function imageToShortVideo(imageDataUrl: string): Promise<Blob> {
@@ -260,15 +302,24 @@ export async function deleteContentFromServer(id: string): Promise<void> {
 }
 
 export abstract class FakerReplacer {
+  protected textPostCache = new Map<string, Post>()
+  protected currentlyLoadingURLs = new Set<string>()
+  protected blacklistedURLs = new Set<string>()
+
   constructor() {
-    this.startRenderExternallyHostedPosts()
+    this.startRenderExternallyHostedContent()
     console.log('[Faker] Extension initialized!')
   }
 
-  /** Apply feed posts content transformation in the DOM */
-  abstract renderExternallyHostedPosts(): Promise<void>
+  abstract getElementsRequiredForReplacement(): any
 
-  protected textPostCache = new Map<string, Post>()
+  abstract addLoadedUsingFakerTag(aPostEle: any): void
+
+  /** Apply feed posts text transformation in the DOM */
+  abstract renderExternallyHostedText(): Promise<void>
+
+  /** Apply feed posts medias transformation in the DOM */
+  abstract renderExternallyHostedMedia(): Promise<void>
 
   protected async getTextPost(url: string): Promise<{ textPost: Post; isError: boolean }> {
     let textPost: Post
@@ -328,9 +379,11 @@ export abstract class FakerReplacer {
     return newLinkOffset
   }
 
-  private startRenderExternallyHostedPosts() {
-    setInterval(async () => {
-      await this.renderExternallyHostedPosts()
+  private startRenderExternallyHostedContent() {
+    setInterval(() => {
+      this.getElementsRequiredForReplacement()
+      this.renderExternallyHostedText()
+      this.renderExternallyHostedMedia()
     }, 1000)
   }
 }

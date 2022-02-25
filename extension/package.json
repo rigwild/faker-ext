@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "fix-webm-duration": "^1.0.4",
+    "jsqr": "^1.4.0",
     "petite-vue": "^0.3.0",
     "qrjs2": "^0.1.11"
   },

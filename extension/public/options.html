@@ -70,6 +70,24 @@
         <label for="instagramActivated">Instagram</label>
       </div>
 
+      <h3>Content auto-replacement</h3>
+      <p>
+        The auto-replacement feature does a lot of background network requests. Disabling any of this (especially files)
+        can help with performance.
+      </p>
+      <div>
+        <input type="checkbox" id="autoLoadText" v-model="configurationStore.autoLoadText" @change="save" />
+        <label for="autoLoadText">Auto-load text</label>
+      </div>
+      <div>
+        <input type="checkbox" id="autoLoadImages" v-model="configurationStore.autoLoadImages" @change="save" />
+        <label for="autoLoadImages">Auto-load images</label>
+      </div>
+      <div>
+        <input type="checkbox" id="autoLoadVideos" v-model="configurationStore.autoLoadVideos" @change="save" />
+        <label for="autoLoadVideos">Auto-load videos</label>
+      </div>
+
       <h1>Upload with Faker</h1>
       <p>
         Uploading with Faker may not work on some websites. Use this tool to get a link that you can publish anywhere.

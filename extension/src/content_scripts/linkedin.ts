@@ -5,12 +5,13 @@ class LinkedInFakerReplacer extends FakerReplacer {
   private posts: ReturnType<typeof this.getElementsRequiredForReplacement> = []
 
   getElementsRequiredForReplacement() {
+    const { autoLoadText, autoLoadImages, autoLoadVideos } = FAKER_EXTENSION_CONFIG
     const elements = [...document.querySelectorAll('.feed-shared-update-v2')].map(postEle => ({
       postEle, // Post container
       postSubDescriptionEle: postEle.querySelector('.feed-shared-actor__sub-description'), // Post publish datetime span
-      postContentEle: postEle.querySelector('.feed-shared-text > .break-words'), // Post body
-      postContentImgEle: postEle.querySelector('img'), // Post body image
-      postContentVideoEle: postEle.querySelector('video') // Post body video
+      postContentEle: autoLoadText ? postEle.querySelector('.feed-shared-text > .break-words') : undefined, // Post body
+      postContentImgEle: autoLoadImages ? postEle.querySelector('.feed-shared-image img') : undefined, // Post body image
+      postContentVideoEle: autoLoadVideos ? postEle.querySelector('.feed-shared-linkedin-video video') : undefined // Post body video
     }))
     this.posts = elements
     return elements
@@ -80,9 +81,9 @@ class LinkedInFakerReplacer extends FakerReplacer {
       fakerPostsWithMedia.map(async aFakerPost => {
         let mediaType: 'image' | 'video'
 
-        const imgEle = aFakerPost.postContentImgEle
+        const imgEle = aFakerPost.postContentImgEle as HTMLImageElement
         const imgSrc = imgEle?.src
-        const videoEle = aFakerPost.postContentVideoEle
+        const videoEle = aFakerPost.postContentVideoEle as HTMLVideoElement
         const videoSrc = videoEle?.src
 
         const mediaSrc = imgSrc || videoSrc // There is only one of these in a post
@@ -119,6 +120,8 @@ class LinkedInFakerReplacer extends FakerReplacer {
         // Replace the media with the external content
         if (mediaType === 'image') {
           imgEle.src = qrCodeDataResultURL.href
+          console.log(`[Faker] Replaced media image with uri ${qrCodeDataResultURL.href}`)
+
           imgEle.style.border = 'solid 4px transparent'
           imgEle.style.borderRadius = '15px'
           imgEle.style.backgroundImage =
@@ -127,6 +130,8 @@ class LinkedInFakerReplacer extends FakerReplacer {
           imgEle.style.backgroundClip = 'content-box, border-box'
         } else if (mediaType === 'video') {
           videoEle.src = qrCodeDataResultURL.href
+          console.log(`[Faker] Replaced media video with uri ${qrCodeDataResultURL.href}`)
+
           videoEle.style.border = '5px solid transparent'
           videoEle.style.borderImage =
             'linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%) 5'

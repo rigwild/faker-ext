@@ -10,6 +10,9 @@ export type FakerConfiguration = {
   facebookActivated: boolean
   twitterActivated: boolean
   instagramActivated: boolean
+  autoLoadText: boolean
+  autoLoadImages: boolean
+  autoLoadVideos: boolean
 }
 
 const defaults: Readonly<FakerConfiguration> = Object.freeze({
@@ -19,7 +22,10 @@ const defaults: Readonly<FakerConfiguration> = Object.freeze({
   linkedinActivated: true,
   facebookActivated: true,
   twitterActivated: true,
-  instagramActivated: false
+  instagramActivated: false,
+  autoLoadText: true,
+  autoLoadImages: true,
+  autoLoadVideos: true
 })
 
 export let FAKER_EXTENSION_CONFIG: FakerConfiguration

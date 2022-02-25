@@ -1,5 +1,3 @@
-import jsQR from 'jsqr'
-import ysFixWebmDuration from 'fix-webm-duration'
 import { FAKER_EXTENSION_CONFIG, FAKER_USER_AGENT } from './config'
 
 export type Post = {
@@ -128,6 +126,7 @@ export async function readQRCode(imgURI: string) {
   context.drawImage(image, 0, 0)
   const imageData = context.getImageData(0, 0, image.width, image.height)
 
+  const jsQR = (await import('jsqr')).default
   const code = jsQR(imageData.data, image.width, image.height)
   canvas.remove()
   return code
@@ -210,6 +209,7 @@ export function imageToShortVideo(imageDataUrl: string): Promise<Blob> {
 
       // MediaRecorder won't add proper video metadata https://bugs.chromium.org/p/chromium/issues/detail?id=642012
       // Use this lib to fix this shit 😘
+      const ysFixWebmDuration = (await import('fix-webm-duration')).default
       const fixedBlob = await ysFixWebmDuration(buggyBlob, duration - 1500 /*, {logger: false}*/)
       console.log(fixedBlob)
       console.log('[Faker] QR code video blob URI', URL.createObjectURL(fixedBlob))

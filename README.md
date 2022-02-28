@@ -2,11 +2,17 @@
 
 A browser extension to host your social network content externally.
 
-LinkedIn will be focused first as a proof of concept.
+<p align="center">
+  <img src="./screenshot.webp" alt="screenshot of faker on linkedin" width="600"  />
+</p>
 
 ## Specifications
 
-See [Specifications.md](./specifications.md).
+See [Specifications](./specifications.md).
+
+## Demo
+
+[Video of Faker on LinkedIn](./faker_demo.mp4)
 
 ## Supported Social Networks
 

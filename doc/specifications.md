@@ -148,6 +148,8 @@ This is the current version of the browser extension. It is (hopefully?) agnosti
 
 ![Listening to file upload overlay](./extension_listen_file_uploads.png)
 
+**Note:** We implemented this as a toggle to turn on/off the file input listening from the extension so we do not mistakenly replace a file when not needed (e.g. the user changes its profile picture).
+
 ### Post render
 
 We did not find a way to make this agnostic, so everything is social network specific.

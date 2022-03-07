@@ -2,17 +2,36 @@ import { FakerReplacer, getValidFakerUrlsFromString } from '../utils'
 import { loadConfiguration, FAKER_EXTENSION_CONFIG } from '../config'
 
 class FacebookFakerReplacer extends FakerReplacer {
-  async renderExternallyHostedPosts() {
-    const posts = [
+  private posts: ReturnType<typeof this.getElementsRequiredForReplacement> = []
+
+  getElementsRequiredForReplacement() {
+    const elements = [
       ...document.querySelectorAll('div[role="article"] > div > div > div > div > div > div:nth-child(2):not([class])')
     ].map(x => ({
       postEle: x, // Post container
       postSubDescriptionEle: x.querySelector('a[role="link"] > span'), // Post publish datetime span
       postContentEle: x.getElementsByClassName('kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x c1et5uql')[0]?.parentElement // Post body
     }))
+    this.posts = elements
+    return elements
+  }
 
+  addLoadedUsingFakerTag(aPostEle: any): void {
+    if (!aPostEle.postSubDescriptionEle.innerHTML.includes('Faker')) {
+      aPostEle.postSubDescriptionEle.innerHTML +=
+        '<span style="' +
+        'color: white;' +
+        'border-radius: 5px;' +
+        'padding: 1px 4px;' +
+        'background-color: rgb(65, 88, 208);' +
+        'background-image: linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%);' +
+        '">Loaded using Faker ✨</span>'
+    }
+  }
+
+  async renderExternallyHostedText() {
     // Only keep posts containing valid Faker URIs
-    const fakerPosts = posts
+    const fakerPosts = this.posts
       .filter(x => x.postEle && x.postSubDescriptionEle && x.postContentEle)
       .map(x => ({ ...x, regexMatchedUrls: getValidFakerUrlsFromString(x.postContentEle.innerHTML) }))
       .filter(x => x.regexMatchedUrls.length > 0)
@@ -42,18 +61,13 @@ class FacebookFakerReplacer extends FakerReplacer {
         }
 
         // Show that the post was replaced by Faker
-        if (!aFakerPost.postSubDescriptionEle.innerHTML.includes('Faker')) {
-          aFakerPost.postSubDescriptionEle.innerHTML +=
-            '<span style="' +
-            'color: white;' +
-            'border-radius: 5px;' +
-            'padding: 1px 4px;' +
-            'background-color: rgb(65, 88, 208);' +
-            'background-image: linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%);' +
-            '">Loaded using Faker ✨</span>'
-        }
+        this.addLoadedUsingFakerTag(aFakerPost)
       })
     )
+  }
+
+  renderExternallyHostedMedia(): Promise<void> {
+    throw new Error('Method not implemented.')
   }
 }
 

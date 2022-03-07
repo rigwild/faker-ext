@@ -1,24 +1,24 @@
 # Faker Browser Extension
 
-Faker is a browser extension that allows its users to regain control of their data by hosting their social network content on their own server. I was the tech lead on this project.
+Faker is a browser extension that allows its users to regain control of their data by hosting their social network content on their own server.
 
 Using Faker, social networks will receive simple links that are only accessible by users of the Faker browser extension instead of your actualcontent, preventing tracking and profiling.
 
-This is done transparently for the user, the extension will upload text, images or videos on demand to their server, and automatically load it when browsing the social network. Thus, the user can easily choose to delete content whenever they want as they have control of their own server.
+This is done transparently for the user. The extension will upload text, images or videos on demand to their own server, and automatically load it when browsing the social network. Thus, the user can easily choose to delete content whenever they want as they have control of their own server.
 
 **Note:** This is a research experiment and is not recommended for real-word usage yet.
 
 <p align="center">
-  <img src="./screenshot.webp" alt="screenshot of faker on linkedin" width="600"  />
+  <img src="./doc/screenshot.webp" alt="screenshot of faker on linkedin" width="600"  />
 </p>
 
 ## Specifications
 
-See [Specifications](./specifications.md).
+See [Specifications](./doc/specifications.md).
 
 ## Demo
 
-[Video of Faker running on LinkedIn](./faker_demo.mp4) ([Youtube link](https://www.youtube.com/watch?v=UnMiL9gg_AY))
+[Video of Faker running on LinkedIn](./doc/faker_demo.mp4) ([Youtube link](https://www.youtube.com/watch?v=UnMiL9gg_AY))
 
 ## Browser Extension
 
@@ -34,7 +34,7 @@ npm i -D
 
 ### Build
 
-**MacOS & Linux**
+#### Linux
 
 ```sh
 npm run build
@@ -46,11 +46,11 @@ Automatically rebuild on changes
 npm run dev
 ```
 
-**Note** You still need to reload the extension in your browser.
+**Note:** You still need to reload the extension in your browser.
 
-**Windows**
+#### Windows
 
-Execute with git bash (from extension directory)
+Execute with git bash
 
 ```sh
 cd extension

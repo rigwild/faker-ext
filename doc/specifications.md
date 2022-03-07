@@ -1,6 +1,16 @@
 # Specifications
 
-This document includes specifications for each components of the Faker extension.
+This document includes specifications for each components of the Faker browser extension.
+
+## What is Faker
+
+Faker is a browser extension that allows its users to regain control of their data by hosting their social network content on their own server.
+
+Using Faker, social networks will receive simple links that are only accessible by users of the Faker browser extension instead of your actualcontent, preventing tracking and profiling.
+
+This is done transparently for the user. The extension will upload text, images or videos on demand to their own server, and automatically load it when browsing the social network. Thus, the user can easily choose to delete content whenever they want as they have control of their own server.
+
+**Note:** This is a research experiment and is not recommended for real-word usage yet.
 
 <p align="center">
   <img src="./screenshot.webp" alt="screenshot of faker on linkedin" width="600"  />
@@ -9,16 +19,6 @@ This document includes specifications for each components of the Faker extension
 ## Demo
 
 [Video of Faker running on LinkedIn](./faker_demo.mp4) ([Youtube link](https://www.youtube.com/watch?v=UnMiL9gg_AY))
-
-## What is Faker
-
-This project is an in-depth proof of concept allowing social networks users to reclaim control over their content.
-
-When you post a comment on Facebook, its content is uploaded on Facebook's servers: you don't have control on it anymore. Faker proposes to give it back to you by intercepting the upload and replacing the actual content by a link to the data on your own self-hosted server.
-
-For example, with Faker, Facebook will only receive the link to the content on your server instead of your text content: you are then the only owner of what you post.
-
-Links are then replaced with the remote content when they are displayed on the webpage. You don't see any difference with a normal use of the social network.
 
 ## Architecture
 

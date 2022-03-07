@@ -1,6 +1,12 @@
-# Faker Extension
+# Faker Browser Extension
 
-A browser extension to host your social network content externally.
+Faker is a browser extension that allows its users to regain control of their data by hosting their social network content on their own server. I was the tech lead on this project.
+
+Using Faker, social networks will receive simple links that are only accessible by users of the Faker browser extension instead of your actualcontent, preventing tracking and profiling.
+
+This is done transparently for the user, the extension will upload text, images or videos on demand to their server, and automatically load it when browsing the social network. Thus, the user can easily choose to delete content whenever they want as they have control of their own server.
+
+**Note:** This is a research experiment and is not recommended for real-word usage yet.
 
 <p align="center">
   <img src="./screenshot.webp" alt="screenshot of faker on linkedin" width="600"  />
@@ -12,29 +18,7 @@ See [Specifications](./specifications.md).
 
 ## Demo
 
-[Video of Faker on LinkedIn](./faker_demo.mp4)
-
-## Supported Social Networks
-
-- LinkedIn
-  - [x] Post
-  - [x] Image
-  - [x] Video
-- Facebook
-  - [x] Post
-  - [ ] Image
-  - [ ] Video
-- Twitter
-  - [ ] Post
-  - [ ] Image
-  - [ ] Video
-- Instagram
-  - [ ] Image
-  - [ ] Video
-- Reddit
-  - [ ] Post
-  - [ ] Image
-  - [ ] Video
+[Video of Faker running on LinkedIn](./faker_demo.mp4) ([Youtube link](https://www.youtube.com/watch?v=UnMiL9gg_AY))
 
 ## Browser Extension
 
@@ -87,18 +71,6 @@ Faker is now installed and working!
 cd server
 ```
 
-### Run with Docker
-
-```sh
-docker compose --env-file default.env up
-```
-
-To hot-reload on changes, run this in another terminal.
-
-```sh
-npm run build:watch
-```
-
 ### Install dependencies
 
 Prerequisites:
@@ -115,31 +87,32 @@ npm i -D
 npm run build
 ```
 
+Build with hot-reload
+
+```sh
+npm run build:watch
+```
+
 ### Run
+
+#### Run with Docker
+
+```sh
+npm run build
+
+docker compose --env-file default.env up
+# or
+npm run docker:up
+```
+
+To hot-reload on changes, run this in another terminal
+
+```sh
+npm run build:watch
+```
+
+#### Run with Node.js
 
 ```sh
 npm start
 ```
-
-### Run in development mode
-
-Running with hot-reload support
-
-```sh
-npm run dev
-```
-
-## TODO
-
-- Browser Extension
-  - [x] Replace post content with link to an external provider
-  - [x] Load post content from external provider
-  - [x] Configure the extension options
-  - [x] Render a link as a QR code image
-  - [x] Render a link as a QR code video
-- External Provider
-  - Self-hosted server
-    - [x] Post
-    - [x] Image
-    - [x] Video
-  - [ ] IPFS

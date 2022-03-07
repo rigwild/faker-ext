@@ -2,9 +2,17 @@
 
 This document includes specifications for each components of the Faker extension.
 
+<p align="center">
+  <img src="./screenshot.webp" alt="screenshot of faker on linkedin" width="600"  />
+</p>
+
+## Demo
+
+[Video of Faker running on LinkedIn](./faker_demo.mp4) ([Youtube link](https://www.youtube.com/watch?v=UnMiL9gg_AY))
+
 ## What is Faker
 
-This project is an in-depth PoC allowing social networks users to reclaim control over their content.
+This project is an in-depth proof of concept allowing social networks users to reclaim control over their content.
 
 When you post a comment on Facebook, its content is uploaded on Facebook's servers: you don't have control on it anymore. Faker proposes to give it back to you by intercepting the upload and replacing the actual content by a link to the data on your own self-hosted server.
 
@@ -13,9 +21,10 @@ For example, with Faker, Facebook will only receive the link to the content on y
 Links are then replaced with the remote content when they are displayed on the webpage. You don't see any difference with a normal use of the social network.
 
 ## Architecture
-![Architecture schema](./faker_archi.png)
 
-This schema can be modified by editing the source PowerPoint file `faker_archi.pptx` and export it as a PNG.
+![Faker architecture schema](./faker_architecture.jpg)
+
+This schema can be modified by editing the source PowerPoint file `faker_archi.pptx` and export it as a JPEG.
 
 ## What we do not keep from the previous project and why
 
@@ -39,18 +48,13 @@ We settled on first focusing on LinkedIn directly. We do not keep the demo Insta
 
 We chose LinkedIn for educational/professional purposes; it is not as intrusive as facebook or another personal social network.
 
-## Extension
-
-As mentioned in the [What we do not keep from the previous project and why](#what-we-do-not-keep-from-the-previous-project-and-why) section, webapp are now working as SPAs with the data sent using `fetch` instead of `<form>` submits. This means that a generic approach cannot work.
-
-We have to develop **specific code for each of the social networks**.
-
-To control who can add or remove posts from the [Storage self-hosted server](#storage-self-hosted-server), a user-configured user/password will be included in each of these requests to authenticate.
-If another Faker users tries to do these operations with an invalid user/password combination, the operation will be rejected.
+## Browser Extension
 
 ### Tech Stack
 
 The extension is developed in TypeScript. Its configuration page is using [petite-vue](https://github.com/vuejs/petite-vue).
+
+TypeScript is built using [esbuild](https://esbuild.github.io/).
 
 ### Configuration
 
@@ -58,53 +62,126 @@ The extension lets the user configure the URI to its [Storage self-hosted server
 
 It also let the user enable/disable the extension for each of the social networks.
 
+![Configuration page](./extension_configuration.png)
+
 ### Post publish
 
-1. **[Extension]** Inject the hooking script with a `<script>` tag in the page
-2. **[Page]** Hook the [`Fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and [`XMLHttpRequest`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) APIs to execute our replace function before sending requests
-3. **[Page]** When a request is being sent, if it matches a specified HTTP method and route then continue this process, else just send it as is
-4. **[Page]** Ask the extension using [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) to upload the post content to the [Storage self-hosted server](#storage-self-hosted-server)
-5. **[Extension]** Upload the post content to the [Storage self-hosted server](#storage-self-hosted-server) with credentials which returns its content URI
-6. **[Extension]** Send the content URI to the page using [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)
-7. **[Page]** Replace the post content with its content URI in the request body
-8. **[Page]** Send the modified request
+#### Iteration 1 of the POC
 
-#### Why such a mess?
+In this version, a specific code is developed for each social network. An event listener with [`capture`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#capture) to be executed before the original one is added to post publish buttons. Original event is blocked using [`Event.stopImmediatePropagation()`](https://developer.mozilla.org/en-US/docs/Web/API/Event/stopImmediatePropagation).
 
-##### Different JavaScript contexts
+We abandoned this idea as it is not agnostic.
+
+#### Iteration 2 of the POC
+
+In this version, we hooked the native [`Fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and [`XMLHttpRequest`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) browser APIs to execute our replace function before sending requests. Basically, we intercept the requests and replace the content with the remote content before they are sent to the social networks. It is a bit like a MITM attack.
+
+We ditched this approach for two reasons:
+
+1. It is a hack/workaround and is definitely not expected by the browser developers
+2. It is quite agnostic, but each social network has its own way of communicating with its API, so would still require specific code
+3. **[Extension]** Inject the hooking script with a `<script>` tag in the page
+4. **[Page]** Hook the [`Fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and [`XMLHttpRequest`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) browser APIs to execute our replace function before sending requests
+5. **[Page]** When a request is being sent, if it matches a specified HTTP method and route then continue this process, else just send it as is
+6. **[Page]** Ask the extension using [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) to upload the post content to the [Storage self-hosted server](#storage-self-hosted-server)
+7. **[Extension]** Upload the post content to the [Storage self-hosted server](#storage-self-hosted-server) with credentials which returns its content URI
+8. **[Extension]** Send the content URI to the page using [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)
+9. **[Page]** Replace the post content with its content URI in the request body
+10. **[Page]** Send the modified request
+
+##### Why such a mess?
+
+###### Different JavaScript contexts
 
 The page and the extension are in different JavaScript contexts (i.e. `window.fetch` in the extension is not the same as `window.fetch` in the window). Thus, we inject the hooking script in the page with a `<script>` tag because we can't directly hook the functions in the page.
 
-##### Bypass CSP
+###### Bypass CSP
 
 When using JavaScript in a web page, the browser will strictly follow the [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) sent by the remote server. Therefore, the browser prevents us from doing requests to unauthorized URIs (such as our [Storage self-hosted server](#storage-self-hosted-server)).
 
 To work around it, we set up a message listener in the extension's context (that does not need to follow the CSP) that handles the [Storage self-hosted server](#storage-self-hosted-server) upload then we send the result back using a message from the extension (see [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)).
 
+##### Another method we tested
+
+1. Listen for outgoing requests
+2. Look for page requests that match specified HTTP methods and routes
+3. Copy the request headers and body (including cookies)
+4. Abort the request
+5. Send a new request from the extension with the body modified and cookies included
+
+This works and the post is successfully created. The issue is that because the initial request was aborted, an error is show on the frontend. We could fix this by modifying the request's response but it is not permitted for browser extensions. Therefore, we trashed this.
+
+More info:
+
+- https://developer.chrome.com/docs/extensions/reference/webRequest/
+- https://stackoverflow.com/a/37118414
+
+#### Iteration 3 of the POC
+
+This is the current version of the browser extension. It is (hopefully?) agnostic to every websites. We use a contextual menu.
+
+##### Text Posts
+
+1. User write its post as usual on the website
+2. User selects the text they want to replace, then clicks on the `Replace text using Faker` contextual menu
+3. A `Faker is uploading your file...` loading overlay is shown on the page
+4. Ask the extension using [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) to upload the post content to the [Storage self-hosted server](#storage-self-hosted-server)
+5. **[Background]** Upload the post content to the [Storage self-hosted server](#storage-self-hosted-server) with credentials which returns its content URI
+6. **[Background]** Send the content URI to the page using [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)
+7. Replace the post content with its content URI in the input box
+8. User publish the post as usual
+
+##### Medias
+
+1. User clicks on the `Upload a file using Faker` contextual menu
+2. A `Faker is listening for file uploads` overlay is shown on the page
+3. Faker look for any `input[type="file"]` on the page and add an event listener to them with [`capture`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#capture) to be executed before the original one. Original event is blocked using [`Event.stopImmediatePropagation()`](https://developer.mozilla.org/en-US/docs/Web/API/Event/stopImmediatePropagation)
+4. The user uploads a file as they usually would
+5. A `Faker is uploading your file...` loading overlay is shown on the page
+6. Ask the extension using [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) to upload the media to the [Storage self-hosted server](#storage-self-hosted-server)
+7. **[Background]** Upload the media to the [Storage self-hosted server](#storage-self-hosted-server) with credentials which returns its content URI
+8. **[Background]** Send the content URI to the page using [`window.postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)
+9. Render the media URI as a QR code image in canvas
+10. If a video: render the QR code as the video using [`MediaRecorder`](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder), add a random dots animation to make the video file bigger (LinkedIn requires video to be 75 KB minimum)
+11. The QR code is injected in the targetted `input[type="file"]`, the social network never receives the original file
+12. User publish the post as usual
+
+![Listening to file upload overlay](./extension_listen_file_uploads.png)
+
 ### Post render
 
-**Note:** We decided to not make this component ultra-generic as we want to have specific UI changes for each social networks, not just replacing the post content.
+We did not find a way to make this agnostic, so everything is social network specific.
 
-1. Periodically check the page content for new posts containing a header indicating the post is a Faker-handled post.
+1. Periodically check the page content for posts containing a link including `/faker/api`
 2. Fetch the content using the uri included in the post
 3. Replace the post with the retrieved content
 4. Show on the post that is was pulled from a Faker server
 
-### Other tested methods
+There may be a better and more agnostic way to do this, hint: [`MutationObserver`](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver).
 
-#### Intercept and modify the body of posts publish requests
+Plus, this will break as soon as social networks updates their frontend.
 
-The extension would play the role of a MITM (man in the middle) between the user and the social network. This would have the benefit of being quite generic, we would only have to specifiy the path of the content of the post in the body in the request and the API route to intercept.
+Posts rendering:
 
-The problem is that browser extension are not allowed to inspect **then** edit the body of a request before it being sent to the destination server. They can only edit the headers.
-
-A trick was tried:
-
-1. Copy the request headers and body (including cookies)
-2. Abort the request
-3. Send a new request from the extension with the body modified and cookies included
-
-This works and the post is successfully created. The issue is that, because the initial request was aborted, an error is show on the frontend. We could fix this by modifying the request's response but it is not permitted for browser extensions.
+- LinkedIn
+  - [x] Post
+  - [x] Image
+  - [x] Video
+- Facebook
+  - [x] Post
+  - [ ] Image
+  - [ ] Video
+- Twitter
+  - [x] Post
+  - [ ] Image
+  - [ ] Video
+- Instagram
+  - [ ] Image
+  - [ ] Video
+- Reddit
+  - [ ] Post
+  - [ ] Image
+  - [ ] Video
 
 ## Storage self-hosted server
 
@@ -112,30 +189,49 @@ The server stores the content the user posts on a social network (posts and comm
 
 ### Tech Stack
 
-The server is developed in TypeScript with [Express](https://expressjs.com/) and saves its data in a PostgreSQL.
+Typescript, Node.js, PostgreSQL, [Sequelize ORM](https://sequelize.org/), [Express.js](https://expressjs.com/), Docker.
 
 ### Database Schema
 
-![Database schema](./Faker_db.drawio.png)
-Schema can be modified by importing the file on [draw.io](https://app.diagrams.net/)
+| posts               |
+| ------------------- |
+| `id`: `UUID`        |
+| `content`: `TEXT`   |
+| `createdAt`: `DATE` |
+| `updatedAt`: `DATE` |
 
-### Authentification
-To execute edit requests (`POST`, `DELETE`...), the user must be authentificated.
-Authentification is done using `basic-auth` method.
+| medias              |
+| ------------------- |
+| `id`: `UUID`        |
+| `content`: `BLOB`   |
+| `createdAt`: `DATE` |
+| `updatedAt`: `DATE` |
 
-The credentials must be set as environment variable (`API_USER`, `API_PASSWORD`) on the server creation.
+| api_users             |
+| --------------------- |
+| `id`: `INTEGER`       |
+| `username`: `VARCHAR` |
+| `password`: `VARCHAR` |
+| `createdAt`: `DATE`   |
+| `updatedAt`: `DATE`   |
+
+### Authentication
+
+Write operations (`POST`, `DELETE`) require the user to be authenticated using Basic auth (base64 of `username:password`).
+
+The credentials must be set as environment variable (`API_USER`, `API_PASSWORD`) on the server first start to initialize the user in the database.
 
 ### API
 
-#### `GET /api/posts/:id`
+#### `GET /faker/api/posts/:id`
 
 Load the textual post associated with the provided `id`.
 
-#### `GET /api/media/:id`
+#### `GET /faker/api/media/:id`
 
 Load the media file associated with the provided `id`.
 
-#### `POST /api/posts/upload`
+#### `POST /faker/api/upload`
 
 The API can distinguish if the uploaded content is a textual post or a media file by looking at the incoming `Content-Type` header.
 
@@ -143,9 +239,10 @@ The API can distinguish if the uploaded content is a textual post or a media fil
 
 ###### Request Headers
 
-| Name           | Value              |
-| -------------- | ------------------ |
-| `Content-Type` | `application/json` |
+| Name            | Value                                 |
+| --------------- | ------------------------------------- |
+| `Content-Type`  | `application/json`                    |
+| `Authorization` | `Basic <base64 of username:password>` |
 
 ###### Request Body
 
@@ -166,12 +263,46 @@ The API can distinguish if the uploaded content is a textual post or a media fil
 
 ###### Request Headers
 
-| Name           | Value                 |
-| -------------- | --------------------- |
-| `Content-Type` | `multipart/form-data` |
+| Name            | Value                                 |
+| --------------- | ------------------------------------- |
+| `Content-Type`  | `multipart/form-data`                 |
+| `Authorization` | `Basic <base64 of username:password>` |
 
 ###### Request Body
 
 | Key     | Value        |
 | ------- | ------------ |
 | `media` | File content |
+
+## Additional notes
+
+### Brave Shields
+
+If you are using Brave, Brave Shields is blocking the requests to fetch the content from the Faker server as it looks like a third-party request. Looks like a browser bug. Disable it.
+
+### Twitter video upload
+
+Twitter video upload does not work `Source media is of invalid format 3. Only MP4 and MpegTs are supported`, uploaded video are webm but are not supported by the website.
+
+### Facebook removes posts from timeline
+
+Facebook does weird things where replaced posts would randomly disappear, they probably compare visible posts with their local cache and see something is wrong and delete the DOM node
+
+### Usability of the projet
+
+A big issue with this project is that non technical users will not host their own server. If there are no users to begin with, it will be hard to onboard new users. There need to be an easy way to user Faker. Below are potential suggestions.
+
+#### Public instance
+
+Propose a public instance of the server where users connect to by default, accepting that doing this is worse for data privacy than self-hosting your own server.
+
+#### Peer-to-peer file sharing
+
+Upload the content using a P2P protocol like [IPFS](https://ipfs.io/) or [WebTorrent](https://webtorrent.io/). Think about a way to retain the content as it will disappear from the network if no one is hosting it (see [IPFS Persistence, permanence, and pinning](https://docs.ipfs.io/concepts/persistence/#persistence-versus-permanence)).
+
+If opting for this, add End-to-End Encryption as content on P2P networks are visible by peers.
+
+#### Missing features
+
+- Add a list of uploaded content in the extension options with delete buttons to remove the content
+- Make the content only loadable when coming from the same domain (domain is currently passed by the extension using the head `X-Faker-Domain` but not stored nor checked when fetching the data)

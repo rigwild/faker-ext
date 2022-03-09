@@ -20,6 +20,10 @@ This is done transparently for the user. The extension will upload text, images 
 
 [Video of Faker running on LinkedIn](./faker_demo.mp4) ([Youtube link](https://www.youtube.com/watch?v=UnMiL9gg_AY))
 
+## How to develop Faker
+
+[Tutorial how to develop Faker (french)](https://www.youtube.com/watch?v=r3tID4nMXtM)
+
 ## Architecture
 
 ![Faker architecture schema](./faker_architecture.jpg)
